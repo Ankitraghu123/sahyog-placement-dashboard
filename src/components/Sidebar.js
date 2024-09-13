@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 import Profile3 from "../assets/img/team/profile-pic.png";
 
 import { Routes } from "../routes";
-import ReactHero from "../assets/img/technologies/react-hero-logo.svg";
+import ReactHero from "../assets/img/technologies/logo.png";
 import { isEmployee, isLoggedIn } from "../utils/config";
 import './style.css';
 import { useSelector } from "react-redux";
