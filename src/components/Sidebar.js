@@ -3,7 +3,7 @@ import SimpleBar from 'simplebar-react';
 import { useHistory, useLocation } from "react-router-dom";
 import { CSSTransition } from 'react-transition-group';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChartPie, faSignOutAlt, faTable, faTimes, faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
+import { faChartPie, faSignOutAlt, faTable,faUsers,faUser, faTimes, faChevronDown, faChevronUp, faBuilding, faPhone, faLock } from "@fortawesome/free-solid-svg-icons";
 import { Nav, Badge, Image, Button, Accordion, Navbar, Form, Row, Col } from '@themesberg/react-bootstrap';
 import { Link } from 'react-router-dom';
 import Profile3 from "../assets/img/team/profile-pic.png";
@@ -13,6 +13,8 @@ import ReactHero from "../assets/img/technologies/logo.png";
 import { isEmployee, isLoggedIn } from "../utils/config";
 import './style.css';
 import { useSelector } from "react-redux";
+import { FaFontAwesome } from "react-icons/fa";
+// import { FaUser } from "react-icons/fa";
 
 export default (props = {}) => {
   const location = useLocation();
@@ -131,28 +133,28 @@ export default (props = {}) => {
               </Form>
               {isEmployee() && <NavItem title="DashBoard" link={Routes.DashboardOverview.path} icon={faChartPie} />}
               {isLoggedIn() && <NavItem title="Admin DashBoard" link={Routes.DashboardAdmin.path} icon={faChartPie} />}
-              <CollapsableNavItem eventKey="tables/" title="Candidate" icon={faTable}>
+              <CollapsableNavItem eventKey="tables/" title="Candidate" icon={faUsers}>
                 <NavItem title="Candidate List" link={Routes.CandidateList.path} />
                 <NavItem title="Add Candidate" link={Routes.Candidate.path} />
               </CollapsableNavItem>
               {isLoggedIn() && (
                 <>
-                  <CollapsableNavItem eventKey="tables/" title="Employee" icon={faTable}>
+                  <CollapsableNavItem eventKey="tables/" title="Employee" icon={faUser}>
                     <NavItem title="Employee List" link={Routes.EmployeeList.path} />
                     <NavItem title="Add Employee" link={Routes.AddEmployee.path} />
                   </CollapsableNavItem>
-                  <CollapsableNavItem eventKey="tables/" title="Company" icon={faTable}>
+                  <CollapsableNavItem eventKey="tables/" title="Company" icon={faBuilding}>
                     <NavItem title="Company List" link={Routes.CompanyList.path} />
                     <NavItem title="Add Company" link={Routes.Employer.path} />
                   </CollapsableNavItem>
                   <CollapsableNavItem eventKey="tables/" title="Vacancy" icon={faTable}>
                     <NavItem title="Vacancy List" link={Routes.VacancyList.path} />
                   </CollapsableNavItem>
-                  <NavItem title="Enquiries" link={Routes.Enquiry.path}  icon={faChartPie} />
+                  <NavItem title="Enquiries" link={Routes.Enquiry.path}  icon={faPhone} />
                 </>
               )}
               {isLoggedIn() && <NavItem title="Completed Vacancies" link={Routes.AllCompletedVacancies.path} icon={faChartPie} />}
-              {isLoggedIn() && <NavItem title="Change Password" link={Routes.ChangePassword.path} icon={faChartPie} />}
+              {isLoggedIn() && <NavItem title="Change Password" link={Routes.ChangePassword.path} icon={faLock} />}
               <button className="mt-3 btn1" onClick={loggedOut}>Log Out</button>
               {/* <NavItem title="Sign In" link={Routes.Signin.path} /> */}
               {/* <Dropdown.Divider className="my-3 border-indigo" /> */}
