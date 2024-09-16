@@ -1,6 +1,7 @@
 import AllotedVacancies from "./components/Admin/AllotedVacancies";
 import MailSentVacanciesByEmployee from "./components/MailSentVacanciesByEmployee";
 import AllCompletedVacancies from "./pages/AllCompletedVacancies";
+import ChangePassword from "./pages/ChangePassword";
 
 export const Routes = {
     // pages
@@ -32,6 +33,7 @@ export const Routes = {
     CandidateDetail: { path: "/candidate-detail/:id" },
     CandidateShortListedByJob:{path:"/candidate-shortlisted/:id"},
     AllCompletedVacancies:{path:"/allCompletedVacancies"},
+    ChangePassword:{path:'/change-password'},
     EmployeeList: { path: "/employee-list" },
     EditEmployee: { path: "/edit-employee/:id" },
     EmployeeDetail: { path: "/employee-detail/:id" },

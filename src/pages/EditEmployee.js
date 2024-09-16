@@ -146,7 +146,7 @@ export default function EmployeeForm() {
                                         name="city"
                                         value={formData.city}
                                         onChange={changeHandler}
-                                        required
+                                        // required
                                         type="text"
                                         placeholder="Enter City"
                                     />
@@ -161,7 +161,7 @@ export default function EmployeeForm() {
                                         name="address"
                                         value={formData.address}
                                         onChange={changeHandler}
-                                        required
+                                        // required
                                         type="text"
                                         placeholder="Enter Address"
                                     />

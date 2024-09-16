@@ -257,7 +257,7 @@ export default () => {
                         name="allotedTo"
                         value={formData.allotedTo}
                         onChange={handleChange}
-                        required
+                        // required
                       >
                         <option value="">Select Employee</option>
                         {employees?.map(employee => (

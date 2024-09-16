@@ -152,6 +152,7 @@ export default (props = {}) => {
                 </>
               )}
               {isLoggedIn() && <NavItem title="Completed Vacancies" link={Routes.AllCompletedVacancies.path} icon={faChartPie} />}
+              {isLoggedIn() && <NavItem title="Change Password" link={Routes.ChangePassword.path} icon={faChartPie} />}
               <button className="mt-3 btn1" onClick={loggedOut}>Log Out</button>
               {/* <NavItem title="Sign In" link={Routes.Signin.path} /> */}
               {/* <Dropdown.Divider className="my-3 border-indigo" /> */}

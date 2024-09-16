@@ -24,6 +24,12 @@ const loginEmployee = async (employeeData)=>{
     return response.data
 }
 
+const changePassword = async (id,employeeData)=>{
+    const response = await axios.post(`${base_url}employee/changePassword/${id}`,employeeData,config)
+    return response.data
+}
+
+
 const getAllEmployees = async()=>{
     const response = await axios.get(`${base_url}employee/getAll`,config)
     return response.data
@@ -45,6 +51,6 @@ const deleteEmployee = async(id)=>{
 }
 
 
-const employeeService = {registerEmployee,loginEmployee,getAllEmployees,getSingleEmploye,editEmployee,deleteEmployee}
+const employeeService = {registerEmployee,loginEmployee,getAllEmployees,getSingleEmploye,editEmployee,deleteEmployee,changePassword}
 
 export default employeeService

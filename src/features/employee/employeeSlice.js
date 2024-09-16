@@ -21,6 +21,14 @@ export const loginEmployee = createAsyncThunk('employee/employee-login',async(em
     }
 })
 
+export const changePassword = createAsyncThunk('employee/change password',async(employee,thunkApi)=>{
+    try{
+        return await employeeService.changePassword(employee.id,employee.formData)
+    }catch(err){
+        return thunkApi.rejectWithValue(err)
+    }
+})
+
 export const getAllEmployees = createAsyncThunk('employee/get-all',async(thunkApi)=>{
     try{
         return await employeeService.getAllEmployees()
@@ -178,6 +186,24 @@ export const employeeSlice = createSlice({
             }
         })
         .addCase(deleteEmployee.rejected,(state,action)=>{
+            state.isLoading = false
+            state.isError=true
+            state.isSuccess = false
+            state.deletedEmployee = null
+        })
+
+        .addCase(changePassword.pending,(state)=>{
+            state.isLoading = true
+        })
+        .addCase(changePassword.fulfilled,(state,action)=>{
+            state.isLoading = false
+            state.isSuccess = true
+            state.changedPassword = action.payload
+            if(state.isSuccess == true){
+                toast.info("Password changed successfully")
+            }
+        })
+        .addCase(changePassword.rejected,(state,action)=>{
             state.isLoading = false
             state.isError=true
             state.isSuccess = false

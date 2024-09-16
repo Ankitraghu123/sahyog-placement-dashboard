@@ -55,6 +55,7 @@ import PendingVacancies from '../components/Admin/PendingVacancies';
 import NotEmailedVacancy from '../components/Admin/NotEmailedVacancy';
 import TodaysInterview from '../components/TodaysInterview';
 import NorthTracker from './NorthTracker';
+import ChangePassword from './ChangePassword';
 
 const RouteWithLoader = ({ component: Component, ...rest }) => {
   const [loaded, setLoaded] = useState(false);
@@ -142,6 +143,7 @@ export default () => (
 
     <RouteWithSidebar exact path={Routes.AllCompletedVacancies.path} component={AllCompletedVacancies} condition={isLoggedIn()} />
     <RouteWithSidebar exact path={Routes.Enquiry.path} component={Enquiry} condition={isLoggedIn()} />
+    <RouteWithSidebar exact path={Routes.ChangePassword.path} component={ChangePassword} condition={isLoggedIn()} />
     <RouteWithSidebar exact path={Routes.MailSentVacanciesByEmployee.path} component={MailSentVacanciesByEmployee} condition={isLoggedIn() || isEmployee()} />
     <RouteWithSidebar exact path={Routes.Employer.path} component={Employer} condition={isLoggedIn()} />
     <RouteWithSidebar exact path={Routes.Candidate.path} component={Candidate} condition={isLoggedIn() || isEmployee()} />
