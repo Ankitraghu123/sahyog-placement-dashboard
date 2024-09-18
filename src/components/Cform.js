@@ -74,16 +74,23 @@ export const CandidateForm = () => {
           </Form.Group>
 
           <Form.Group controlId="formBasicMobile">
-            <Form.Label>Mobile</Form.Label>
-            <Form.Control
-              type="text"
-              name="mobile"
-              placeholder="Enter your number.."
-              value={formData.mobile}
-              onChange={handleChange}
-              required
-            />
-          </Form.Group>
+  <Form.Label>Mobile</Form.Label>
+  <Form.Control
+    type="text"
+    name="mobile"
+    placeholder="Enter your number.."
+    value={formData.mobile}
+    onChange={handleChange}
+    maxLength="10" // restricts to 10 digits
+    required
+  />
+  {formData.mobile && formData.mobile.length !== 10 && (
+    <Form.Text className="text-danger">
+      Mobile number must be exactly 10 digits.
+    </Form.Text>
+  )}
+</Form.Group>
+
 
           <Row>
             <Col>
