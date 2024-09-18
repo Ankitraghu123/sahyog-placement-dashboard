@@ -15,7 +15,7 @@ export const CandidateForm = () => {
     dob: '',
     gender: '',
     email: '',
-    password: '',
+    // password: '',
     highestQualification: '',
     postGradApplyYear: '',
     postGradPassingYear: '',
@@ -32,6 +32,7 @@ export const CandidateForm = () => {
     twelfthPercentage: '',
     twelfthBoardName: '',
     twelfthSchoolName: '',
+    twelfthSubject: '',
     tenthApplyYear: '',
     tenthPassingYear: '',
     tenthPercentage: '',
@@ -116,7 +117,7 @@ export const CandidateForm = () => {
           </Row>
 
           <Row>
-            <Col>
+            {/* <Col>
               <Form.Group controlId="formBasicPassword">
                 <Form.Label>Password</Form.Label>
                 <Form.Control
@@ -125,10 +126,10 @@ export const CandidateForm = () => {
                   placeholder="************"
                   value={formData.password}
                   onChange={handleChange}
-                  required
+                  // required
                 />
               </Form.Group>
-            </Col>
+            </Col> */}
             <Col>
               <Form.Group controlId="formBasicEmail">
                 <Form.Label>Email</Form.Label>
@@ -341,7 +342,9 @@ export const CandidateForm = () => {
                   </Form.Group>
                 </Col>
               </Row>
-              <Form.Group controlId="formTwelfthSchoolName">
+              <Row>
+                <Col>
+                <Form.Group controlId="formTwelfthSchoolName">
                 <Form.Label>School Name</Form.Label>
                 <Form.Control
                   type="text"
@@ -350,6 +353,19 @@ export const CandidateForm = () => {
                   onChange={handleChange}
                 />
               </Form.Group>
+                </Col>
+                <Col>
+                <Form.Group controlId="formTwelfthSubject">
+                <Form.Label>Subject</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="twelfthSubject"
+                  value={formData.twelfthSubject}
+                  onChange={handleChange}
+                />
+              </Form.Group>
+                </Col>
+              </Row>
             </>
           )}
 
@@ -405,6 +421,7 @@ export const CandidateForm = () => {
                   </Form.Group>
                 </Col>
               </Row>
+              <Row>
               <Form.Group controlId="formTenthSchoolName">
                 <Form.Label>School Name</Form.Label>
                 <Form.Control
@@ -414,6 +431,7 @@ export const CandidateForm = () => {
                   onChange={handleChange}
                 />
               </Form.Group>
+              </Row>
             </>
           )}
 

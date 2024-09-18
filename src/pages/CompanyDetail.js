@@ -41,7 +41,8 @@ export default () => {
     jobDescription: "",
     allotedTo:null,
     jobFunction:"",
-    city:""
+    city:"",
+    state:""
   });
 
   const handleVacancyChange = (e) => {
@@ -353,7 +354,7 @@ export default () => {
                     <Form.Group>
                       <Form.Label>Location</Form.Label>
                       <Form.Control
-                        required
+                        // required
                         type="text"
                         name="jobLocation"
                         placeholder="Enter Location"
@@ -379,6 +380,22 @@ export default () => {
                   </Col>
                   <Col md={6} className="mb-3">
                     <Form.Group>
+                      <Form.Label>State</Form.Label>
+                      <Form.Control
+                        // required
+                        type="text"
+                        name="state"
+                        placeholder="Enter State"
+                        value={vacancyFormData.state}
+                        onChange={handleVacancyChange}
+                      />
+                    </Form.Group>
+                  </Col>
+                 
+                </Row>
+                <Row>
+                <Col md={6} className="mb-3">
+                    <Form.Group>
                       <Form.Label>Alloted To</Form.Label>
                       <Form.Control
                         as="select"
@@ -395,8 +412,6 @@ export default () => {
                       </Form.Control>
                     </Form.Group>
                   </Col>
-                </Row>
-                <Row>
                   <Col md={6} className="mb-3">
                     <Form.Group>
                       <Form.Label>Function</Form.Label>

@@ -26,7 +26,8 @@ export default () => {
         jobDescription: "",
         allotedTo:"",
         jobFunction:"",
-        city:""
+        city:"",
+        state:""
     });
 
     // Fetch the single vacancy details and set the form data
@@ -55,7 +56,9 @@ export default () => {
                 jobDescription: vacancyDetails.jobDescription || "",
                 allotedTo: vacancyDetails.allotedTo || null,
                 jobFunction: vacancyDetails.jobFunction || "",
-                city: vacancyDetails.city || ""
+                city: vacancyDetails.city || "",
+                state: vacancyDetails.state || ""
+
             });
         }
     }, [vacancyDetails]);
@@ -281,7 +284,10 @@ export default () => {
                     </Form.Group>
                   </Col>
 
-                  <Col md={6} className="mb-3">
+                 
+                        </Row>
+                        <Row>
+                        <Col md={6} className="mb-3">
                     <Form.Group>
                       <Form.Label>City</Form.Label>
                       <Form.Control
@@ -290,6 +296,19 @@ export default () => {
                         name="city"
                         placeholder="Enter City"
                         value={formData.city}
+                        onChange={handleChange}
+                      />
+                    </Form.Group>
+                  </Col>
+                        <Col md={6} className="mb-3">
+                    <Form.Group>
+                      <Form.Label>State</Form.Label>
+                      <Form.Control
+                        // required
+                        type="text"
+                        name="state"
+                        placeholder="Enter state"
+                        value={formData.state}
                         onChange={handleChange}
                       />
                     </Form.Group>
