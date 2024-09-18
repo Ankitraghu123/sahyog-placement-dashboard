@@ -655,13 +655,19 @@ export const VacancyTable = () => {
     dispatch(deleteVacancy(id));
   };
 
+  const sortedVacancies = [...(vacancyListState || [])].sort((a, b) => {
+    if (!a.allotedTo) return -1; // Vacancies with empty allotedTo come first
+    if (!b.allotedTo) return 1;  // Vacancies with non-empty allotedTo go after
+    return 0; // Leave order unchanged if both have allotedTo
+  });
+
   return (
     <Card border="light" className="table-wrapper table-responsive shadow-sm">
       <Card.Body className="pt-0">
         <Table hover className="user-table align-items-center">
           <thead>
             <tr>
-              <th className="border-bottom">S.NO</th>
+              {/* <th className="border-bottom">S.NO</th> */}
               <th className="border-bottom">Job Title</th>
               <th className="border-bottom">Company Name</th>
               <th className="border-bottom">Location</th>
@@ -674,9 +680,9 @@ export const VacancyTable = () => {
             </tr>
           </thead>
           <tbody>
-            {vacancyListState?.map((vacancy, idx) => (
+            {sortedVacancies?.map((vacancy, idx) => (
               <tr key={vacancy._id}>
-                <td className="border-bottom">{idx + 1}</td>
+                {/* <td className="border-bottom">{idx + 1}</td> */}
                 <td className="border-bottom"><Link to={`/candidate-shortlisted/${vacancy._id}`}>{vacancy.role}</Link></td>
                 <td className="border-bottom">{vacancy.companyName}</td>
                 <td className="border-bottom">{vacancy.jobLocation}</td>
