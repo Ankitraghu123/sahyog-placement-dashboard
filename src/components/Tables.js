@@ -325,7 +325,7 @@ export const CandidateTable = () => {
             <option value="">Select a vacancy</option>
             {vacancyListState?.filter(vacancy => vacancy.status === 'Pending').map(vacancy => (
               <option key={vacancy._id} value={vacancy._id}>
-                {vacancy.role} - {vacancy.companyName}
+                {vacancy.role} - {vacancy.companyName}- {vacancy.jobLocation}
               </option>
             ))}
           </Form.Control>
