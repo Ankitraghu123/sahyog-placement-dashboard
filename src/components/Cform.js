@@ -41,6 +41,9 @@ export const CandidateForm = () => {
     skills: '',
     twoWheeler: '',
     drivingLicense: '',
+    city:'',
+    state:'',
+    alternateMobile:''
   });
 
   const handleChange = (e) => {
@@ -91,6 +94,24 @@ export const CandidateForm = () => {
   )}
 </Form.Group>
 
+<Form.Group controlId="formBasicMobile">
+  <Form.Label>Alternate Mobile</Form.Label>
+  <Form.Control
+    type="text"
+    name="alternateMobile"
+    placeholder="Enter your number.."
+    value={formData.alternateMobile}
+    onChange={handleChange}
+    maxLength="10" // restricts to 10 digits
+    // required
+  />
+  {formData.alternateMobile && formData.alternateMobile.length !== 10 && (
+    <Form.Text className="text-danger">
+      Mobile number must be exactly 10 digits.
+    </Form.Text>
+  )}
+</Form.Group>
+
 
           <Row>
             <Col>
@@ -115,6 +136,7 @@ export const CandidateForm = () => {
                   onChange={handleChange}
                   required
                 >
+                  <option value="select gender">Select Gender</option>
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
                   <option value="Others">Others</option>
@@ -151,6 +173,34 @@ export const CandidateForm = () => {
               </Form.Group>
             </Col>
           </Row>
+          <Row>
+          <Col>
+              <Form.Group controlId="formBasicEmail">
+                <Form.Label>City</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="city"
+                  placeholder="Enter your City.."
+                  value={formData.city}
+                  onChange={handleChange}
+                  // required
+                />
+              </Form.Group>
+            </Col>
+            <Col>
+              <Form.Group controlId="formBasicEmail">
+                <Form.Label>State</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="state"
+                  placeholder="Enter your State.."
+                  value={formData.state}
+                  onChange={handleChange}
+                  // required
+                />
+              </Form.Group>
+            </Col>
+          </Row>
 
           <Form.Group controlId="formBasicHighestQualification">
             <Form.Label>Highest Qualification</Form.Label>
@@ -166,6 +216,8 @@ export const CandidateForm = () => {
               <option value="Graduation">Graduation</option>
               <option value="12th">12th</option>
               <option value="10th">10th</option>
+              <option value="Diploama">Diploma</option>
+              <option value="ITI">ITI</option>
             </Form.Control>
           </Form.Group>
 

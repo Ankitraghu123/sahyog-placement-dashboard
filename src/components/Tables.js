@@ -11,7 +11,7 @@ import { Routes } from "../routes";
 import { pageVisits, pageTraffic, pageRanking } from "../data/tables";
 import transactions from "../data/transactions";
 import commands from "../data/commands";
-import { deleteEmployee, getAllEmployees, loginEmployee } from "../features/employee/employeeSlice";
+import { deleteEmployee, getAllEmployees, getSingleEmploye, loginEmployee } from "../features/employee/employeeSlice";
 import { deleteCompany, getAllCompanies } from "../features/company/companySlice";
 import { deleteVacancy, editVacancy, getAllVacancies } from "../features/vacancy/vacancySlice";
 
@@ -199,11 +199,16 @@ export const CandidateTable = () => {
   const [searchTerm, setSearchTerm] = useState(''); // State for search input
   const [statusFilter, setStatusFilter] = useState(''); // State for status filter
 
+  const currentEmployee = useSelector(state => state.employee?.employee);
   useEffect(() => {
+    if (currentEmployee?._id) {
+      dispatch(getSingleEmploye(currentEmployee._id));
+    }
     dispatch(candidateList());
-  }, [dispatch]);
+  }, [dispatch,currentEmployee]);
 
   const candidateListState = useSelector(state => state?.candidate?.candidatelist);
+ 
   const vacancyListState = useSelector(state => state?.employee?.singleEmployee?.allotedVacancies);
   const totalCandidates = candidateListState?.length;
 
@@ -338,85 +343,6 @@ export const CandidateTable = () => {
   );
 };
 
-// export const CandidateTableByJob = () => {
-//     const [searchTerm, setSearchTerm] = useState(''); // State for search input
-//     const [statusFilter, setStatusFilter] = useState(''); // State for status filter
-
-//     const candidateListState = useSelector(state => state?.candidate?.shortListedCandidateByJob);
-//     // const vacancyListState = useSelector(state => state?.employee?.singleEmployee?.allotedVacancies);
-//     const totalCandidates = candidateListState?.length;
-
-//   // Filter candidates based on search input and status filter
-//   const filteredCandidates = candidateListState?.filter(candidate =>
-//     candidate.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-//     (statusFilter === '' || candidate.status === statusFilter)
-//   );
-
-//   return (
-//     <>
-//       {/* Search Input and Status Filter */}
-//       <div className="mb-3 d-flex justify-content-between align-items-center">
-//         <Form.Control
-//           type="text"
-//           placeholder="Search by candidate name..."
-//           value={searchTerm}
-//           onChange={(e) => setSearchTerm(e.target.value)}
-//           style={{ width: '45%' }}
-//         />
-//         <Form.Control
-//           as="select"
-//           value={statusFilter}
-//           onChange={(e) => setStatusFilter(e.target.value)}
-//           style={{ width: '45%' }}
-//         >
-//           <option value="">Filter by status</option>
-//           {/* Add the possible status options based on your data */}
-//           <option value="Pending">Pending</option>
-//           <option value="shortlisted">ShortListed</option>
-//           <option value="Selected">Selected</option>
-//           <option value="Rejected">Rejected</option>
-//           {/* Add more status options as needed */}
-//         </Form.Control>
-//       </div>
-
-//       <Card border="light" className="table-wrapper table-responsive shadow-sm">
-//         <Card.Body className="pt-0">
-//           <Table hover className="user-table align-items-center">
-//             <thead>
-//               <tr>
-//                 <th className="border-bottom">S.NO</th>
-//                 <th className="border-bottom">Candidate Name</th>
-//                 <th className="border-bottom">Mobile</th>
-//                 <th className="border-bottom">Status</th>
-//                 <th className="border-bottom">  Action </th>
-//                 {/* <th className="border-bottom"><FontAwesomeIcon icon={faEdit} /></th> */}
-//               </tr>
-//             </thead>
-//             <tbody>
-//               {filteredCandidates?.map((candidate, idx) => (
-//                 <tr key={candidate._id}>
-//                   <td className="border-bottom">{idx + 1}</td>
-//                   <td className="border-bottom">
-//                     <Link to={`/candidate-detail/${candidate._id}`}>{candidate.name}</Link>
-//                   </td>
-//                   <td className="border-bottom">{candidate.mobile}</td>
-//                   <td className="border-bottom">{candidate.status}</td>
-//                   {/* <td className="border-bottom cursor-pointer" onClick={() => deleteHandler(candidate._id)}>  <FontAwesomeIcon icon={faTrashAlt} /> </td> */}
-//                   <td className="border-bottom">
-//                     <Link to={`/edit-candidate/${candidate._id}`}><FontAwesomeIcon icon={faEdit} /></Link>
-//                   </td>
-//                 </tr>
-//               ))}
-//             </tbody>
-//           </Table>
-       
-//         </Card.Body>
-//       </Card>
-
-//       {/* Select Vacancy and Apply Button */}
-//     </>
-//   );
-// };
 
 export const CandidateTableByJob = () => {
   const [searchTerm, setSearchTerm] = useState(''); // State for search input
@@ -634,6 +560,7 @@ export const CompanyTable = () => {
 
 export const VacancyTable = () => {
   const dispatch = useDispatch();
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     dispatch(getAllVacancies());
@@ -655,19 +582,33 @@ export const VacancyTable = () => {
     dispatch(deleteVacancy(id));
   };
 
-  const sortedVacancies = [...(vacancyListState || [])].sort((a, b) => {
-    if (!a.allotedTo) return -1; // Vacancies with empty allotedTo come first
-    if (!b.allotedTo) return 1;  // Vacancies with non-empty allotedTo go after
-    return 0; // Leave order unchanged if both have allotedTo
+  // Filter vacancies based on the search query
+  const filteredVacancies = (vacancyListState || []).filter(vacancy =>
+    vacancy.jobLocation.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Sort vacancies
+  const sortedVacancies = [...filteredVacancies].sort((a, b) => {
+    if (!a.allotedTo) return -1;
+    if (!b.allotedTo) return 1;
+    return 0;
   });
 
   return (
     <Card border="light" className="table-wrapper table-responsive shadow-sm">
       <Card.Body className="pt-0">
+        {/* Search Bar */}
+        <Form.Group className="mb-3 mt-3">
+          <Form.Control
+            type="text"
+            placeholder="Search by location"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </Form.Group>
         <Table hover className="user-table align-items-center">
           <thead>
             <tr>
-              {/* <th className="border-bottom">S.NO</th> */}
               <th className="border-bottom">Job Title</th>
               <th className="border-bottom">Company Name</th>
               <th className="border-bottom">Location</th>
@@ -675,15 +616,15 @@ export const VacancyTable = () => {
               <th className="border-bottom">Function</th>
               <th className="border-bottom">Alloted To</th>
               <th className="border-bottom">Dead Line</th>
-              <th className="border-bottom"> Action </th>
-              {/* <th className="border-bottom"><FontAwesomeIcon icon={faEdit} /></th> */}
+              <th className="border-bottom">Action</th>
             </tr>
           </thead>
           <tbody>
-            {sortedVacancies?.map((vacancy, idx) => (
+            {sortedVacancies.map((vacancy, idx) => (
               <tr key={vacancy._id}>
-                {/* <td className="border-bottom">{idx + 1}</td> */}
-                <td className="border-bottom"><Link to={`/candidate-shortlisted/${vacancy._id}`}>{vacancy.role}</Link></td>
+                <td className="border-bottom">
+                  <Link to={`/candidate-shortlisted/${vacancy._id}`}>{vacancy.role}</Link>
+                </td>
                 <td className="border-bottom">{vacancy.companyName}</td>
                 <td className="border-bottom">{vacancy.jobLocation}</td>
                 <td className="border-bottom">{vacancy.salary}</td>
@@ -695,30 +636,31 @@ export const VacancyTable = () => {
                     onChange={(e) => handleAllotedToChange(vacancy._id, e.target.value)}
                   >
                     <option value="">Select Employee</option>
-                    {employees?.map((employee) => (
+                    {employees?.map((employee) =>
                       employee.role !== 'admin' ? (
                         <option key={employee._id} value={employee._id}>
                           {employee.name}
                         </option>
                       ) : null
-                    ))}
+                    )}
                   </Form.Control>
                 </td>
                 <td className="border-bottom">{vacancy.deadline}</td>
-                <td className="border-bottom cursor-pointer" >
-                    <FontAwesomeIcon onClick={() => deleteHandler(vacancy._id)} icon={faTrashAlt} /> 
-                
-                  <Link className="ms-2" to={`/edit-vacancy/${vacancy._id}`}><FontAwesomeIcon icon={faEdit} /></Link>
+                <td className="border-bottom cursor-pointer">
+                  <FontAwesomeIcon onClick={() => deleteHandler(vacancy._id)} icon={faTrashAlt} />
+                  <Link className="ms-2" to={`/edit-vacancy/${vacancy._id}`}>
+                    <FontAwesomeIcon icon={faEdit} />
+                  </Link>
                 </td>
               </tr>
             ))}
           </tbody>
         </Table>
-    
       </Card.Body>
     </Card>
   );
 };
+
 
 export const AdminTable = ({vacancyListState}) => {
   const dispatch = useDispatch()

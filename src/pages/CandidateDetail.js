@@ -21,6 +21,14 @@ export default () => {
 
   const candidateState = useSelector(state => state?.candidate?.singleCandidate);
   const currEmployee = useSelector(state => state?.employee?.employee)
+
+  const formatDate = (isoString) => {
+    const date = new Date(isoString);
+    const formattedDate = date.toLocaleDateString('en-GB');  // e.g., 18/09/2024
+    const formattedTime = date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });  // e.g., 11:12
+    return `${formattedDate} ${formattedTime}`;
+  };
+  
   return (
     <>
     <Col xs={12} xl={12}>
@@ -81,14 +89,39 @@ export default () => {
 />
               </Form.Group>
             </Col>
+           
           </Row>
           <Row>
             
             <Col md={4} className="mb-3">
               <Form.Group id="dob">
                 <Form.Label>Date of Birth</Form.Label>
-                <Form.Control required value={candidateState?.dob} type="text" 
+                <Form.Control required value={formatDate(candidateState?.dob)} type="text" 
                 />
+              </Form.Group>
+            </Col>
+            <Col md={4} className="mb-3">
+              <Form.Group id="highestQualification">
+                <Form.Label>HighestQualification</Form.Label>
+                <Form.Control required type="text" value={candidateState?.highestQualification} 
+                    placeholder='NA'
+/>
+              </Form.Group>
+            </Col>
+            <Col md={4} className="mb-3">
+              <Form.Group id="alternateNumber">
+                <Form.Label>Alternate Number</Form.Label>
+                <Form.Control required type="text" value={candidateState?.alternateMobile} 
+                    placeholder='NA'
+/>
+              </Form.Group>
+            </Col>
+            <Col md={4} className="mb-3">
+              <Form.Group id="registeredAt">
+                <Form.Label>Registered At</Form.Label>
+                <Form.Control required type="text" value={formatDate(candidateState?.createdAt)} 
+                    placeholder='NA'
+/>
               </Form.Group>
             </Col>
           </Row>

@@ -56,6 +56,8 @@ import NotEmailedVacancy from '../components/Admin/NotEmailedVacancy';
 import TodaysInterview from '../components/TodaysInterview';
 import NorthTracker from './NorthTracker';
 import ChangePassword from './ChangePassword';
+import NotAllotedVacancies from '../components/Admin/NotAllotedVacancies';
+import TodayTotalInterviews from '../components/Admin/TodayTotalInterviews'
 
 const RouteWithLoader = ({ component: Component, ...rest }) => {
   const [loaded, setLoaded] = useState(false);
@@ -127,6 +129,8 @@ export default () => (
     <RouteWithSidebar exact path={Routes.DashboardOverview.path} component={DashboardOverview} condition={isEmployee()} />
     <RouteWithSidebar exact path={Routes.DashboardAdmin.path} component={DashBoardAdmin} condition={isLoggedIn()} />
     <RouteWithSidebar exact path={Routes.AllotedVacancies.path} component={AllotedVacancies} condition={isLoggedIn()} />
+    <RouteWithSidebar exact path={Routes.NotAllotedVacancies.path} component={NotAllotedVacancies} condition={isLoggedIn()} />
+    <RouteWithSidebar exact path={Routes.TodaysTotalInterview.path} component={TodayTotalInterviews} condition={isLoggedIn()} />
     <RouteWithSidebar exact path={Routes.AdminCompleted.path} component={CompletedVacancies} condition={isLoggedIn()} />
     <RouteWithSidebar exact path={Routes.AdminPending.path} component={PendingVacancies} condition={isLoggedIn()} />
     <RouteWithSidebar exact path={Routes.AdminEmailNotSent.path} component={NotEmailedVacancy} condition={isLoggedIn()} />

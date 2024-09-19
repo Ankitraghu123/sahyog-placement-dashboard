@@ -10,13 +10,16 @@ import { Link } from "react-router-dom";
 
 export default () => {
   const dispatch = useDispatch();
+  const [interview, setInterview] = useState(0);
  
   const allVacancies = useSelector(state => state.vacancy?.allVacancies);
   const allEmployees = useSelector(state => state.employee?.allEmployees);
   const singleEmployeeData = useSelector(state => state.employee?.singleEmployee);
+  const today = new Date().toLocaleDateString('en-GB');
 
   const [vacancyCounts, setVacancyCounts] = useState({
     alloted: 0,
+    notAlloted:0,
     pending: 0,
     completed: 0,
     emailed: 0,
@@ -32,12 +35,20 @@ export default () => {
   useEffect(() => {
     if (allVacancies) {
       const allotedCount = allVacancies.filter(vacancy => vacancy.allotedTo).length;
+      const notAllotedCount = allVacancies.filter(vacancy => !vacancy.allotedTo).length;
       const pendingCount = allVacancies.filter(vacancy => vacancy.status === "Pending").length;
       const completedCount = allVacancies.filter(vacancy => vacancy.status === "completed").length;
       const emailSent = allVacancies.filter(vacancy => vacancy.status === "completed" && vacancy.mail === "sent").length;
 
+      const interviewCount = allVacancies.filter(vac => {
+        const interviewDate = new Date(vac.interviewSheduled).toLocaleDateString('en-GB');
+        return interviewDate === today;
+      }).length;
+      setInterview(interviewCount)
+
       setVacancyCounts({
         alloted: allotedCount,
+        notAlloted: notAllotedCount,
         pending: pendingCount,
         completed: completedCount,
         emailed: emailSent,
@@ -65,15 +76,24 @@ export default () => {
           <CounterWidget
             category="Total Alloted Vacancies"
             title={vacancyCounts.alloted}
-            icon={faChartLine}
+            // icon={faChartLine}
             to='/admin/alloted-vacancies'
           />
         </Col>
         <Col xs={12} sm={6} xl={3} className="mb-4">
           <CounterWidget
+            category="Not Alloted Vacancies" // New widget for not allotted vacancies
+            title={vacancyCounts.notAlloted}
+            // icon={fa}
+            to='/admin/not-alloted-vacancies'
+          />
+        </Col>
+
+        <Col xs={12} sm={6} xl={3} className="mb-4">
+          <CounterWidget
             category="Total Pending Vacancies"
             title={vacancyCounts.pending}
-            icon={faCashRegister}
+            // icon={faCashRegister}
             to='/admin/pending-vacancies'
           />
         </Col>
@@ -81,7 +101,7 @@ export default () => {
           <CounterWidget
             category="Total Completed Vacancies"
             title={vacancyCounts.completed}
-            icon={faCashRegister}
+            // icon={faCashRegister}
             to='/admin/completed-vacancies'
           />
         </Col>
@@ -89,8 +109,16 @@ export default () => {
           <CounterWidget
             category="Emailed vacancies"
             title={vacancyCounts.emailed}
-            icon={faCashRegister}
+            // icon={faCashRegister}
             to='/admin/emailSent-vacancies'
+          />
+        </Col>
+        <Col xs={12} sm={6} xl={3} className="mb-4">
+          <CounterWidget
+            category="Todays Total Interiew"
+            title={interview}
+            // icon={faCashRegister}
+            to='/admin/todays-interview'
           />
         </Col>
       </Row>
@@ -111,11 +139,11 @@ export default () => {
          
           {allEmployees?.map((emp,idx) => {
         if (emp.role !== "admin") {
-          if (!employeesData[emp._id]) {
-            fetchEmployeeData(emp._id);
-          }
+          // if (!employeesData[emp._id]) {
+          //   fetchEmployeeData(emp._id);
+          // }
           
-          const employeeData = employeesData[emp._id] || {};
+          const employeeData =emp;
           const employeePendingVacancies = employeeData.allotedVacancies?.filter(
             vacancy => vacancy.status === "Pending"
           ).length || 0;
