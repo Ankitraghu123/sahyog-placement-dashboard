@@ -39,7 +39,7 @@ export const CandidateForm = () => {
     tenthBoardName: '',
     tenthSchoolName: '',
     skills: '',
-    twoWheeler: '',
+    twoWheelerAvailable: '',
     drivingLicense: '',
     city:'',
     state:'',
@@ -506,19 +506,57 @@ export const CandidateForm = () => {
             />
           </Form.Group>
 
-          <Form.Group controlId="formBasicTwoWheeler">
+          {/* <Form.Group controlId="formBasicTwoWheeler">
             <Form.Label>Two Wheeler</Form.Label>
             <Form.Control
               as="select"
-              name="twoWheeler"
-              value={formData.twoWheeler}
+              name="twoWheelerAvailable"
+              value={formData.twoWheelerAvailable}
               onChange={handleChange}
             >
               <option value="">Select</option>
               <option value="Yes">Yes</option>
               <option value="No">No</option>
             </Form.Control>
-          </Form.Group>
+          </Form.Group> */}
+
+          <div className="form-group">
+            <label>Do you have a Two WHeeler?</label>
+            <div className="d-flex">
+              <label className="d-flex align-items-center mr-5">
+                Yes
+                <input
+                  type="radio"
+                  name="twoWheelerAvailable"
+                  value="yes"
+                  checked={formData.twoWheelerAvailable === "yes"}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      twoWheelerAvailable: e.target.value,
+                    })
+                  }
+                  className="ml-4"
+                />
+              </label>
+              <label className="d-flex align-items-center">
+                No
+                <input
+                  type="radio"
+                  name="twoWheelerAvailable"
+                  value="no"
+                  checked={formData.twoWheelerAvailable === "no"}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      twoWheelerAvailable: e.target.value,
+                    })
+                  }
+                  className="ml-4"
+                />
+              </label>
+            </div>
+          </div>
 
           <div className="form-group">
             <label>Do you have a driving license?</label>

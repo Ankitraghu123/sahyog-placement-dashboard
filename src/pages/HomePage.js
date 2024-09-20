@@ -58,6 +58,10 @@ import NorthTracker from './NorthTracker';
 import ChangePassword from './ChangePassword';
 import NotAllotedVacancies from '../components/Admin/NotAllotedVacancies';
 import TodayTotalInterviews from '../components/Admin/TodayTotalInterviews'
+import TodaysAllotedVacancy from '../components/Admin/TodaysAllotedVacancy'
+import TodaysCompletedVac from '../components/Admin/TodaysCompletedVac'
+import TodaysCompletedEmpVac from '../components/TodayCompletedEmpVac'
+
 
 const RouteWithLoader = ({ component: Component, ...rest }) => {
   const [loaded, setLoaded] = useState(false);
@@ -128,6 +132,8 @@ export default () => (
     {/* pages */}
     <RouteWithSidebar exact path={Routes.DashboardOverview.path} component={DashboardOverview} condition={isEmployee()} />
     <RouteWithSidebar exact path={Routes.DashboardAdmin.path} component={DashBoardAdmin} condition={isLoggedIn()} />
+    <RouteWithSidebar exact path={Routes.TodayAllotedVac.path} component={TodaysAllotedVacancy} condition={isLoggedIn()} />
+    <RouteWithSidebar exact path={Routes.TodayCompletedVac.path} component={TodaysCompletedVac} condition={isLoggedIn()} />
     <RouteWithSidebar exact path={Routes.AllotedVacancies.path} component={AllotedVacancies} condition={isLoggedIn()} />
     <RouteWithSidebar exact path={Routes.NotAllotedVacancies.path} component={NotAllotedVacancies} condition={isLoggedIn()} />
     <RouteWithSidebar exact path={Routes.TodaysTotalInterview.path} component={TodayTotalInterviews} condition={isLoggedIn()} />
@@ -144,6 +150,8 @@ export default () => (
 
 
     <RouteWithSidebar exact path={Routes.TotalAllotedCompletedVacancies.path} component={TotalAllotedCompletedVacancy} condition={isLoggedIn() || isEmployee()} />
+
+    <RouteWithSidebar exact path={Routes.TodayCompletedEmpVac.path} component={TodaysCompletedEmpVac} condition={isLoggedIn() || isEmployee()} />
 
     <RouteWithSidebar exact path={Routes.AllCompletedVacancies.path} component={AllCompletedVacancies} condition={isLoggedIn()} />
     <RouteWithSidebar exact path={Routes.Enquiry.path} component={Enquiry} condition={isLoggedIn()} />

@@ -198,6 +198,8 @@ export const CandidateTable = () => {
   const [selectedVacancy, setSelectedVacancy] = useState('');
   const [searchTerm, setSearchTerm] = useState(''); // State for search input
   const [statusFilter, setStatusFilter] = useState(''); // State for status filter
+  const [cityFilter, setCityFilter] = useState(''); // State for city filter
+  const [qualificationFilter, setQualificationFilter] = useState(''); // State for highest qualification filter
 
   const currentEmployee = useSelector(state => state.employee?.employee);
   useEffect(() => {
@@ -205,10 +207,9 @@ export const CandidateTable = () => {
       dispatch(getSingleEmploye(currentEmployee._id));
     }
     dispatch(candidateList());
-  }, [dispatch,currentEmployee]);
+  }, [dispatch, currentEmployee]);
 
   const candidateListState = useSelector(state => state?.candidate?.candidatelist);
- 
   const vacancyListState = useSelector(state => state?.employee?.singleEmployee?.allotedVacancies);
   const totalCandidates = candidateListState?.length;
 
@@ -217,7 +218,7 @@ export const CandidateTable = () => {
   };
 
   const handleCheckboxChange = (candidateId) => {
-    setSelectedCandidates(prevSelected => 
+    setSelectedCandidates(prevSelected =>
       prevSelected.includes(candidateId)
         ? prevSelected.filter(id => id !== candidateId)
         : [...prevSelected, candidateId]
@@ -242,37 +243,51 @@ export const CandidateTable = () => {
     }
   };
 
-  // Filter candidates based on search input and status filter
+  // Filter candidates based on search input, status, city, and highest qualification
   const filteredCandidates = candidateListState?.filter(candidate =>
     candidate.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-    (statusFilter === '' || candidate.status === statusFilter)
+    (statusFilter === '' || candidate.status === statusFilter) &&
+    (cityFilter === '' || candidate.city?.toLowerCase().includes(cityFilter.toLowerCase())) &&
+    (qualificationFilter === '' || candidate.highestQualification.toLowerCase().startsWith(qualificationFilter.toLowerCase()))
   );
 
   return (
     <>
-      {/* Search Input and Status Filter */}
+      {/* Search Input and Filters */}
       <div className="mb-3 d-flex justify-content-between align-items-center">
         <Form.Control
           type="text"
           placeholder="Search by candidate name..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          style={{ width: '45%' }}
+          style={{ width: '22%' }}
         />
         <Form.Control
           as="select"
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          style={{ width: '45%' }}
+          style={{ width: '22%' }}
         >
           <option value="">Filter by status</option>
-          {/* Add the possible status options based on your data */}
           <option value="Pending">Pending</option>
           <option value="shortlisted">ShortListed</option>
           <option value="Selected">Selected</option>
           <option value="Rejected">Rejected</option>
-          {/* Add more status options as needed */}
         </Form.Control>
+        <Form.Control
+          type="text"
+          placeholder="Search by city..."
+          value={cityFilter}
+          onChange={(e) => setCityFilter(e.target.value)}
+          style={{ width: '22%' }}
+        />
+        <Form.Control
+          type="text"
+          placeholder="Search by highest qualification..."
+          value={qualificationFilter}
+          onChange={(e) => setQualificationFilter(e.target.value)}
+          style={{ width: '22%' }}
+        />
       </div>
 
       <Card border="light" className="table-wrapper table-responsive shadow-sm">
@@ -287,9 +302,9 @@ export const CandidateTable = () => {
                 <th className="border-bottom">Candidate Name</th>
                 <th className="border-bottom">Mobile</th>
                 <th className="border-bottom">Status</th>
-                {/* <th className="border-bottom">Resume</th> */}
+                <th className="border-bottom">City</th>
+                <th className="border-bottom">Qualification</th>
                 <th className="border-bottom"> Action </th>
-                {/* <th className="border-bottom"><FontAwesomeIcon icon={faEdit} /></th> */}
               </tr>
             </thead>
             <tbody>
@@ -308,17 +323,16 @@ export const CandidateTable = () => {
                   </td>
                   <td className="border-bottom">{candidate.mobile}</td>
                   <td className="border-bottom">{candidate.status}</td>
-                  {/* <td className="border-bottom"> <a href={candidate?.resumeUrl} target="_blank" rel="noopener noreferrer">
-    View Resume
-  </a></td> */}
-                  <td className="border-bottom cursor-pointer" >  <FontAwesomeIcon onClick={() => deleteHandler(candidate._id)} icon={faTrashAlt} />
+                  <td className="border-bottom">{candidate.city}</td>
+                  <td className="border-bottom">{candidate.highestQualification}</td>
+                  <td className="border-bottom cursor-pointer">
+                    <FontAwesomeIcon onClick={() => deleteHandler(candidate._id)} icon={faTrashAlt} />
                     <Link className="ms-2" to={`/edit-candidate/${candidate._id}`}><FontAwesomeIcon icon={faEdit} /></Link>
                   </td>
                 </tr>
               ))}
             </tbody>
           </Table>
-          
         </Card.Body>
       </Card>
 
@@ -342,6 +356,7 @@ export const CandidateTable = () => {
     </>
   );
 };
+
 
 
 export const CandidateTableByJob = () => {
@@ -621,7 +636,9 @@ export const VacancyTable = () => {
           </thead>
           <tbody>
             {sortedVacancies.map((vacancy, idx) => (
-              <tr key={vacancy._id}>
+              <tr key={vacancy._id} 
+              style={{ backgroundColor: !vacancy.allotedTo ? 'rgba(255, 0, 0, 0.2)' : 'transparent' }} 
+              >
                 <td className="border-bottom">
                   <Link to={`/candidate-shortlisted/${vacancy._id}`}>{vacancy.role}</Link>
                 </td>
@@ -726,15 +743,27 @@ export const AdminTable = ({vacancyListState}) => {
   );
 };
 
-export const AllCompletedVacancyTable = () => {
+export const AllCompletedVacancyTable = ({todayVac}) => {
   const dispatch = useDispatch();
+  const today = new Date().toLocaleDateString('en-GB');
 
   useEffect(() => {
     dispatch(getAllVacancies());
     dispatch(getAllEmployees());
   }, [dispatch]);
 
-  const vacancyListState = useSelector((state) => state?.vacancy?.allVacancies);
+  const statusChangeHandler = (id, status) => {
+    dispatch(editVacancy({ id, status,isAdmin:true }));
+  };
+
+  let vacancyListState = useSelector((state) => state?.vacancy?.allVacancies);
+
+  if(todayVac){
+    vacancyListState = vacancyListState.filter(vacancy => {
+      const completedDate = new Date(vacancy.completedDate).toLocaleDateString('en-GB');
+      return completedDate ==today;
+    })
+  }
 
   const [updatedVacancy, setUpdatedVacancy] = useState({});
 
@@ -769,6 +798,7 @@ export const AllCompletedVacancyTable = () => {
               <th className="border-bottom">Location</th>
               <th className="border-bottom">Salary</th>
               <th className="border-bottom">Alloted To</th>
+              <th className="border-bottom px-6">Status</th>
               <th className="border-bottom">Dead Line</th>
               <th className="border-bottom">Completed At</th>
               <th className="border-bottom">Mail Status</th>
@@ -787,6 +817,16 @@ export const AllCompletedVacancyTable = () => {
                   <td className="border-bottom">{vacancy.jobLocation}</td>
                   <td className="border-bottom">{vacancy.salary}</td>
                   <td className="border-bottom">{vacancy.allotedTo?.name}</td>
+                  <td className="border-bottom">
+                    <select
+                      value={vacancy.status} // Ensure this reflects the current status
+                      onChange={(e) => statusChangeHandler(vacancy._id, e.target.value)}
+                      className="form-select px-2"
+                    >
+                      <option value="completed">Completed</option>
+                      <option value="Pending">Pending</option>
+                    </select>
+                  </td>
                   <td className="border-bottom">{vacancy.deadline}</td>
                   <td className="border-bottom">{new Date(vacancy.updatedAt).toLocaleString()}</td>
                   <td className="border-bottom">
@@ -940,6 +980,8 @@ export const AllotedVacansiesByEmployee = ({ vacancyListState,pending }) => {
               <th className="border-bottom">Location</th>
               <th className="border-bottom">Salary</th>
               <th className="border-bottom">Deadline</th>
+              <th className="border-bottom">Gender</th>
+              <th className="border-bottom">Job Function</th>
               <th className="border-bottom">Status</th>
             </tr>
           </thead>
@@ -955,6 +997,8 @@ export const AllotedVacansiesByEmployee = ({ vacancyListState,pending }) => {
                   <td className="border-bottom">{vacancy.jobLocation}</td>
                   <td className="border-bottom">{vacancy.salary}</td>
                   <td className="border-bottom">{vacancy.deadline}</td>
+                  <td className="border-bottom">{vacancy.gender}</td>
+                  <td className="border-bottom">{vacancy.jobFunction}</td>
                   <td className="border-bottom">
                     <select
                       value={vacancy.status} // Ensure this reflects the current status
@@ -976,6 +1020,8 @@ export const AllotedVacansiesByEmployee = ({ vacancyListState,pending }) => {
                   <td className="border-bottom">{vacancy.jobLocation}</td>
                   <td className="border-bottom">{vacancy.salary}</td>
                   <td className="border-bottom">{vacancy.deadline}</td>
+                  <td className="border-bottom">{vacancy.gender}</td>
+                  <td className="border-bottom">{vacancy.jobFunction}</td>
                   <td className="border-bottom">
                     <select
                       value={vacancy.status} // Ensure this reflects the current status
@@ -1016,7 +1062,9 @@ export const AllotedCompletedVacansiesByEmployee = ({ vacancyListState }) => {
               <th className="border-bottom">Location</th>
               <th className="border-bottom">Salary</th>
               <th className="border-bottom">Deadline</th>
-              <th className="border-bottom">Status</th>
+              <th className="border-bottom">Gender</th>
+              <th className="border-bottom">Job Function</th>
+              <th className="border-bottom px-6">Status</th>
               <th className="border-bottom">Interview Sheduled</th>
             </tr>
           </thead>
@@ -1032,6 +1080,8 @@ export const AllotedCompletedVacansiesByEmployee = ({ vacancyListState }) => {
                   <td className="border-bottom">{vacancy.jobLocation}</td>
                   <td className="border-bottom">{vacancy.salary}</td>
                   <td className="border-bottom">{vacancy.deadline}</td>
+                  <td className="border-bottom">{vacancy.gender}</td>
+                  <td className="border-bottom">{vacancy.jobFunction}</td>
                   <td className="border-bottom">
                     <select
                       value={vacancy.status} // Ensure this reflects the current status

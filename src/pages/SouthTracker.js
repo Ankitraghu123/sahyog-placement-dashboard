@@ -23,36 +23,57 @@ export default () => {
     dispatch(getSingleVacancies(id));
   }, [dispatch, id]);
 
+  const formatDate = (isoDate)=>{
+    const date = new Date(isoDate);
+    const formattedDate = date.toLocaleDateString('en-GB');
+    return formattedDate
+  }
+
+  function calculateAge(birthDate) {
+    const today = new Date();
+    const birth = new Date(birthDate);
+
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDifference = today.getMonth() - birth.getMonth();
+    
+    // Adjust if the birthday hasn't occurred yet this year
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birth.getDate())) {
+        age--;
+    }
+
+    return age;
+}
+
   // Memoize csvData to prevent unnecessary recalculations
   const csvData = useMemo(() => {
     const candidatesToExport = selectedCandidates.length > 0 ? selectedCandidates : filteredCandidates;
     if (!candidatesToExport || candidatesToExport.length === 0) return [];
     
     return candidatesToExport.map((candidate, idx) => ({
-      SNO: idx + 1,
+      // SNO: idx + 1,
       Role: vacancy?.role || '',
       RoleLocation: vacancy?.jobLocation || '',
       CandidateName: candidate.name || '',
       MobileNo: candidate.mobile || '',
       EmailID: candidate.email || '',
-      DOB: candidate.dob || '',
+      DOB: candidate.dob ? formatDate(candidate.dob) : '',
       Gender: candidate.gender || '',
       CandidateLocation: candidate.city || '',
       State: candidate.state || '',
-      TwoWheeler: candidate.twoWheelerAvailable ? 'Yes' : 'No',
+      TwoWheeler: candidate.twoWheelerAvailable == false ? 'No' : 'Yes',
       '10%': candidate.tenthPercentage || '',
       '10thPassingYear': candidate.tenthPassingYear || '',
       '12%': candidate.twelfthPercentage || '',
       '12thPassingYear': candidate.twelfthPassingYear || '',
       GraduationPercentage: candidate.gradPercentage || '',
-      GraduationPassingYear: candidate.gradPassingYear || '',
+      GraduationPassingYear:candidate.gradSubject && candidate.gradPassingYear ? `${candidate.gradPassingYear} - ${candidate.gradSubject}` : '',
       PostGraduationPercentage: candidate.postGradPercentage || '',
-      PostGraduationPassingYear: candidate.postGradPassingYear || '',
+      PostGraduationPassingYear: candidate.postGradSubject && candidate.postGradradPassingYear ? `${candidate.postGradPassingYear} - ${candidate.postGradSubject}` : '',
       TotalExperience: candidate.totalExperience || '',
       CurrentCtc: candidate.currentCTC || '',
-      JobProfileExplained: candidate.jobProfileExplained ? 'Yes' : 'No',
-      CTCInformed: candidate.ctcInformed ? 'Yes' : 'No',
-      ConsultantName: candidate.consultantName || '',
+      JobProfileExplained: 'Yes',
+      CTCInformed: 'Yes',
+      ConsultantName: 'Sahyog job and multi work solutions',
       Remark: candidate.remark || ''
     }));
   }, [selectedCandidates, filteredCandidates, vacancy]);
@@ -80,43 +101,43 @@ export default () => {
         </CSVLink>
       </div>
 
-      <Card border="light" className="table-wrapper table-responsive shadow-sm">
+      <Card border="light" className="table-wrapper table-responsive shadow-sm border-danger">
         <Card.Body className="pt-0">
           <Table hover className="user-table align-items-center">
             <thead>
               <tr>
-                <th className="border-bottom">Select</th>
-                <th className="border-bottom">S.NO</th>
-                <th className="border-bottom">Role</th>
-                <th className="border-bottom">Role Location</th>
-                <th className="border-bottom">Candidate Name</th>
-                <th className="border-bottom">Mobile No</th>
-                <th className="border-bottom">Email ID</th>
-                <th className="border-bottom">DOB</th>
-                <th className="border-bottom">Gender</th>
-                <th className="border-bottom">Candidate Location</th>
-                <th className="border-bottom">State</th>
-                <th className="border-bottom">Two Wheeler(Y/N)</th>
-                <th className="border-bottom">10%</th>
-                <th className="border-bottom">10th Passing Year</th>
-                <th className="border-bottom">12%</th>
-                <th className="border-bottom">12th Passing Year</th>
-                <th className="border-bottom">Graduation %</th>
-                <th className="border-bottom">Graduation Passing Year</th>
-                <th className="border-bottom">Post Graduation %</th>
-                <th className="border-bottom">Post Graduation Passing Year</th>
-                <th className="border-bottom">Total Experience</th>
-                <th className="border-bottom">Current CTC</th>
-                <th className="border-bottom">Job Profile Explained</th>
-                <th className="border-bottom">CTC Informed</th>
-                <th className="border-bottom">Consultant Name</th>
-                <th className="border-bottom">Remark</th>
+                <th className="border-bottom border-danger">Select</th>
+                {/* <th className="border-bottom border-danger">S.NO</th> */}
+                <th className="border-bottom border-danger">Role</th>
+                <th className="border-bottom border-danger">Role Location</th>
+                <th className="border-bottom border-danger">Candidate Name</th>
+                <th className="border-bottom border-danger">Mobile No</th>
+                <th className="border-bottom border-danger">Email ID</th>
+                <th className="border-bottom border-danger">DOB</th>
+                <th className="border-bottom border-danger">Gender</th>
+                <th className="border-bottom border-danger">Candidate Location</th>
+                <th className="border-bottom border-danger">State</th>
+                <th className="border-bottom border-danger">Two Wheeler(Y/N)</th>
+                <th className="border-bottom border-danger">10%</th>
+                <th className="border-bottom border-danger">10th Passing Year</th>
+                <th className="border-bottom border-danger">12%</th>
+                <th className="border-bottom border-danger">12th Passing Year</th>
+                <th className="border-bottom border-danger">Graduation %</th>
+                <th className="border-bottom border-danger">Graduation Passing Year</th>
+                <th className="border-bottom border-danger">Post Graduation %</th>
+                <th className="border-bottom border-danger">Post Graduation Passing Year</th>
+                <th className="border-bottom border-danger">Total Experience</th>
+                <th className="border-bottom border-danger">Current CTC</th>
+                <th className="border-bottom border-danger">Job Profile Explained</th>
+                <th className="border-bottom border-danger">CTC Informed</th>
+                <th className="border-bottom border-danger">Consultant Name</th>
+                <th className="border-bottom border-danger">Remark</th>
               </tr>
             </thead>
             <tbody>
               {filteredCandidates.map((candidate, idx) => (
-                <tr key={candidate._id}>
-                  <td className="border-bottom">
+                <tr key={candidate._id} className='border border-danger'>
+                  <td className="border-bottom  border-danger">
                     <input
                       type="checkbox"
                       checked={selectedCandidates.some(selected => selected._id === candidate._id)}
@@ -129,31 +150,31 @@ export default () => {
                       }}
                     />
                   </td>
-                  <td className="border-bottom">{idx + 1}</td>
-                  <td className="border-bottom">{vacancy?.role}</td>
-                  <td className="border-bottom">{vacancy?.jobLocation}</td>
-                  <td className="border-bottom">{candidate.name}</td>
-                  <td className="border-bottom">{candidate.mobile}</td>
-                  <td className="border-bottom">{candidate.email}</td>
-                  <td className="border-bottom">{candidate.dob}</td>
-                  <td className="border-bottom">{candidate.gender}</td>
-                  <td className="border-bottom">{candidate.city}</td>
-                  <td className="border-bottom">{candidate.state}</td>
-                  <td className="border-bottom">{candidate.twoWheelerAvailable ? 'Yes' : 'No'}</td>
-                  <td className="border-bottom">{candidate.tenthPercentage}</td>
-                  <td className="border-bottom">{candidate.tenthPassingYear}</td>
-                  <td className="border-bottom">{candidate.twelfthPercentage}</td>
-                  <td className="border-bottom">{candidate.twelfthPassingYear}</td>
-                  <td className="border-bottom">{candidate.gradPercentage}</td>
-                  <td className="border-bottom">{candidate.gradPassingYear}</td>
-                  <td className="border-bottom">{candidate.postGradPercentage}</td>
-                  <td className="border-bottom">{candidate.postGradPassingYear}</td>
-                  <td className="border-bottom">{candidate.totalExperience}</td>
-                  <td className="border-bottom">{candidate.currentCTC}</td>
-                  <td className="border-bottom">{candidate.jobProfileExplained ? 'Yes' : 'No'}</td>
-                  <td className="border-bottom">{candidate.ctcInformed ? 'Yes' : 'No'}</td>
-                  <td className="border-bottom">{candidate.consultantName}</td>
-                  <td className="border-bottom">{candidate.remark}</td>
+                  {/* <td className="border-bottom">{idx + 1}</td> */}
+                  <td className="border-bottom border-danger">{vacancy?.role}</td>
+                  <td className="border-bottom border-danger">{vacancy?.jobLocation}</td>
+                  <td className="border-bottom border-danger">{candidate.name}</td>
+                  <td className="border-bottom border-danger">{candidate.mobile}</td>
+                  <td className="border-bottom border-danger">{candidate.email}</td>
+                  <td className="border-bottom border-danger">{formatDate(candidate.dob)}</td>
+                  <td className="border-bottom border-danger">{candidate.gender}</td>
+                  <td className="border-bottom border-danger">{candidate.city}</td>
+                  <td className="border-bottom border-danger">{candidate.state}</td>
+                  <td className="border-bottom border-danger">{candidate.twoWheelerAvailable== false ? 'No' : 'Yes'}</td>
+                  <td className="border-bottom border-danger">{candidate.tenthPercentage}</td>
+                  <td className="border-bottom border-danger">{candidate.tenthPassingYear}</td>
+                  <td className="border-bottom border-danger">{candidate.twelfthPercentage}</td>
+                  <td className="border-bottom border-danger">{candidate.twelfthPassingYear}</td>
+                  <td className="border-bottom border-danger">{candidate.gradPercentage}</td>
+                  <td className="border-bottom border-danger">{candidate.gradPassingYear}-{candidate.gradSubject}</td>
+                  <td className="border-bottom border-danger">{candidate.postGradPercentage}</td>
+                  <td className="border-bottom border-danger">{candidate.postGradPassingYear}-{candidate.postGradSubject}</td>
+                  <td className="border-bottom border-danger">{candidate.totalExperience}</td>
+                  <td className="border-bottom border-danger">{candidate.currentCTC}</td>
+                  <td className="border-bottom border-danger"> Yes</td>
+                  <td className="border-bottom border-danger">Yes</td>
+                  <td className="border-bottom border-danger">Sahyog job and multi work solutions</td>
+                  <td className="border-bottom border-danger">{candidate.remark}</td>
                 </tr>
               ))}
             </tbody>

@@ -26,60 +26,56 @@ export default () => {
     dispatch(getSingleVacancies(id))
   },[])
 
+  const formatDate = (isoDate)=>{
+    const date = new Date(isoDate);
+    const formattedDate = date.toLocaleDateString('en-GB');
+    return formattedDate
+  }
+
+  function calculateAge(birthDate) {
+    const today = new Date();
+    const birth = new Date(birthDate);
+
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDifference = today.getMonth() - birth.getMonth();
+    
+    // Adjust if the birthday hasn't occurred yet this year
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birth.getDate())) {
+        age--;
+    }
+
+    return age;
+}
   const csvData = useMemo(() => {
     const candidatesToExport = selectedCandidates.length > 0 ? selectedCandidates : filteredCandidates;
     if (!candidatesToExport || candidatesToExport.length === 0) return [];
     
     return candidatesToExport.map((candidate, idx) => ({
-      SNO: idx + 1,
-      ConsultantName: candidate.consultantName || '', // Consultant Name
-      CandidateName: candidate.name || '', // Name of Candidate
-      DOB: candidate.dob || '', // DOB
-      Age: candidate.age || '', // Age, calculate if not directly available
+      // SNO: idx + 1,
+      "ConsultantName":'Sahyog job and multi work solutions', // Consultant Name
+      "Candidate Name": candidate.name || '', // Name of Candidate
+      DOB:candidate.dob ? formatDate(candidate.dob) : '', // DOB
+      Age: candidate.dob ? calculateAge(candidate.dob) :'', // Age, calculate if not directly available
       Gender: candidate.gender || '', // Gender
       PhoneNo: candidate.mobile || '', // Phone No
       EmailID: candidate.email || '', // Mail ID
-      QualificationYear: candidate.highestQualificationYear || '', // Qualification (last degree) year
+      QualificationYear: candidate.highestQualification || '', // Qualification (last degree) year
       QualificationPercentage: candidate.highestQualificationPercentage || '', // Percentage for Qualification
       HscYear: candidate.twelfthPassingYear || '', // Hsc Year
       HscPercentage: candidate.twelfthPercentage || '', // Percentage for Hsc
       SscYear: candidate.tenthPassingYear || '', // SSc Year
       SscPercentage: candidate.tenthPercentage || '', // Percentage for SSc
-      "Is job profile explained and okay with candidate? ": candidate.jobProfileExplained ? 'Yes' : 'No', // Is job profile explained and okay with candidate?
-     "Is CTC informed and okay? ": candidate.ctcInformed ? 'Yes' : 'No', // Is CTC informed and okay?
-      "Is off-roll nature of job okay with candidate? ": candidate.onRollOpportunityExplained ? 'Yes' : 'No', // Is the on-roll opportunity explained with 18 months clause?
-      "Is the on-roll opportunity explained with 18 months clause? ": candidate.onRollOpportunityExplained ? 'Yes' : 'No',
+      "Is job profile explained and okay with candidate? ": 'Yes', // Is job profile explained and okay with candidate?
+     "Is CTC informed and okay? ": 'Yes',
+      "Is off-roll nature of job okay with candidate? ": 'Yes',
+      "Is the on-roll opportunity explained with 18 months clause? ": 'Yes',
       CommunicationSkills: candidate.communicationSkills || '', // Communication skills
       "Qualitative Feedback On Candidate": candidate.qualitativeFeedback || '', // Qualitative feedback on candidate
       Remark: candidate.remark || '' // Remark
     }));
   }, [selectedCandidates, filteredCandidates, vacancy]);
 
-//   const csvData = filteredCandidates?.map((candidate, idx) => ({
-//     SNO: idx + 1,
-//     ConsultantName: candidate.consultantName || '', // Consultant Name
-//     CandidateName: candidate.name || '', // Name of Candidate
-//     DOB: candidate.dob || '', // DOB
-//     Age: candidate.age || '', // Age, calculate if not directly available
-//     Gender: candidate.gender || '', // Gender
-//     PhoneNo: candidate.mobile || '', // Phone No
-//     EmailID: candidate.email || '', // Mail ID
-//     QualificationYear: candidate.highestQualificationYear || '', // Qualification (last degree) year
-//     QualificationPercentage: candidate.highestQualificationPercentage || '', // Percentage for Qualification
-//     HscYear: candidate.twelfthPassingYear || '', // Hsc Year
-//     HscPercentage: candidate.twelfthPercentage || '', // Percentage for Hsc
-//     SscYear: candidate.tenthPassingYear || '', // SSc Year
-//     SscPercentage: candidate.tenthPercentage || '', // Percentage for SSc
-//     "Is job profile explained and okay with candidate? ": candidate.jobProfileExplained ? 'Yes' : 'No', // Is job profile explained and okay with candidate?
-//    "Is CTC informed and okay? ": candidate.ctcInformed ? 'Yes' : 'No', // Is CTC informed and okay?
-//     "Is off-roll nature of job okay with candidate? ": candidate.onRollOpportunityExplained ? 'Yes' : 'No', // Is the on-roll opportunity explained with 18 months clause?
-//     "Is the on-roll opportunity explained with 18 months clause? ": candidate.onRollOpportunityExplained ? 'Yes' : 'No',
-//     CommunicationSkills: candidate.communicationSkills || '', // Communication skills
-//     "Qualitative Feedback On Candidate": candidate.qualitativeFeedback || '', // Qualitative feedback on candidate
-//     Remark: candidate.remark || '' // Remark
-// }));
 
-  
 
   return (
     <>
@@ -101,39 +97,39 @@ export default () => {
                 </CSVLink>
       </div>
 
-      <Card border="light" className="table-wrapper table-responsive shadow-sm">
+      <Card className="table-wrapper table-responsive shadow-sm" style={{ borderColor: '#EE9C8D'}}>
         <Card.Body className="pt-0">
           <Table hover className="user-table align-items-center">
             <thead>
               <tr>
-                <th className="border-bottom">Select</th>
-                <th className="border-bottom">Sr.NO</th>
-                <th className="border-bottom">Consultant Name</th>
-                <th className="border-bottom">Name Of Candidate</th>
-                <th className="border-bottom">DOB</th>
-                <th className="border-bottom">Age</th>
-                <th className="border-bottom">Gender</th>
-                <th className="border-bottom">Phone No</th>
-                <th className="border-bottom">Mail ID</th>
-                <th className="border-bottom">Qualification (last degree) year</th>
-                <th className="border-bottom">Percentage</th>
-                <th className="border-bottom">Hsc Year</th>
-                <th className="border-bottom">Percentage</th>
-                <th className="border-bottom">SSc Year</th>
-                <th className="border-bottom">Percentage</th>
-                <th className="border-bottom"> Is job profile explained and okay with candidate? </th>
-                <th className="border-bottom"> Is CTC informed and okay? </th>
-                <th className="border-bottom"> Is the on-roll opportunity explained with 18 months clause? </th>
-                <th className="border-bottom"> Communication skills  </th>
-                <th className="border-bottom"> Qualitative feedback on candidate 
+                <th style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>Select</th>
+                {/* <th style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>Sr.NO</th> */}
+                <th style={{ borderBottomColor: '#EE9C8D',borderBottomWidth:'2px' }}>Consultant Name</th>
+                <th style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>Name Of Candidate</th>
+                <th style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>DOB</th>
+                <th style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>Age</th>
+                <th style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>Gender</th>
+                <th style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>Phone No</th>
+                <th style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>Mail ID</th>
+                <th style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>Qualification (last degree) year</th>
+                <th style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>Percentage</th>
+                <th style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>Hsc Year</th>
+                <th style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>Percentage</th>
+                <th style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>SSc Year</th>
+                <th style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>Percentage</th>
+                <th style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}> Is job profile explained and okay with candidate? </th>
+                <th style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}> Is CTC informed and okay? </th>
+                <th style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}> Is the on-roll opportunity explained with 18 months clause? </th>
+                <th style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}> Communication skills  </th>
+                <th style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}> Qualitative feedback on candidate 
                  </th>            
-                <th className="border-bottom">Remark</th>
+                <th style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>Remark</th>
               </tr>
             </thead>
             <tbody>
               {filteredCandidates?.map((candidate, idx) => (
                 <tr key={candidate._id}>
-                  <td className="border-bottom">
+                  <td style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>
                     <input
                       type="checkbox"
                       checked={selectedCandidates.some(selected => selected._id === candidate._id)}
@@ -146,31 +142,31 @@ export default () => {
                       }}
                     />
                   </td>
-                  <td className="border-bottom">{idx + 1}</td>
-                  <td className="border-bottom"></td> 
-                  <td className="border-bottom">
+                  {/* <td style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>{idx + 1}</td> */}
+                  <td style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>Sahyog job and multi work solutions</td> 
+                  <td style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>
                   {candidate.name}
                     {/* <Link to={`/candidate-detail/${candidate._id}`}>{candidate.name}</Link> */}
                   </td>
-                  <td className="border-bottom">{candidate.dob}</td>
-                  <td className="border-bottom"></td>
-                  <td className="border-bottom">{candidate.gender}</td>
-                  <td className="border-bottom">{candidate.mobile}</td>
-                  <td className="border-bottom">{candidate.email}</td>
-                  <td className="border-bottom">{candidate.highestQualification}</td>
-                  <td className="border-bottom"></td>
+                  <td style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>{formatDate(candidate.dob)}</td>
+                  <td style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>{calculateAge(candidate.dob)}</td>
+                  <td style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>{candidate.gender}</td>
+                  <td style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>{candidate.mobile}</td>
+                  <td style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>{candidate.email}</td>
+                  <td style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>{candidate.highestQualification}</td>
+                  <td style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}></td>
                  
                  
-                  <td className="border-bottom">{candidate.tenthPercentage}</td>
-                  <td className="border-bottom">{candidate.tenthPassingYear}</td>
-                  <td className="border-bottom">{candidate.twelfthPercentage}</td>
-                  <td className="border-bottom">{candidate.twelfthPassingYear}</td>
-                  <td className="border-bottom"></td>
-                  <td className="border-bottom"></td>
-                  <td className="border-bottom"></td>
-                  <td className="border-bottom"></td>
-                  <td className="border-bottom"></td>
-                  <td className="border-bottom"></td>
+                  <td style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>{candidate.tenthPassingYear}</td>
+                  <td style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>{candidate.tenthPercentage}</td>
+                  <td style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>{candidate.twelfthPassingYear}</td>
+                  <td style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>{candidate.twelfthPercentage}</td>
+                  <td style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>Yes</td>
+                  <td style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>Yes</td>
+                  <td style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>Yes</td>
+                  <td style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}></td>
+                  <td style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}></td>
+                  <td style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}></td>
                 </tr>
               ))}
             </tbody>

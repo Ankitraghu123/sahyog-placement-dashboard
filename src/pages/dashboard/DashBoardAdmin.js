@@ -23,6 +23,9 @@ export default () => {
     pending: 0,
     completed: 0,
     emailed: 0,
+    todayAlloted:0,
+    todayCompleted:0,
+
   });
 
   const [employeesData, setEmployeesData] = useState({});
@@ -46,19 +49,31 @@ export default () => {
       }).length;
       setInterview(interviewCount)
 
+      const todayAllotedCount = allVacancies.filter(vacancy => {
+        const allotedDate = new Date(vacancy.allotedDate).toLocaleDateString('en-GB');
+        return allotedDate ==today;
+      }).length;
+
+      const todayCompletedCount = allVacancies.filter(vacancy => {
+        const completedDate = new Date(vacancy.completedDate).toLocaleDateString('en-GB');
+        return completedDate ==today;
+      }).length;
+
       setVacancyCounts({
         alloted: allotedCount,
         notAlloted: notAllotedCount,
         pending: pendingCount,
         completed: completedCount,
         emailed: emailSent,
+        todayAlloted:todayAllotedCount,
+        todayCompleted:todayCompletedCount
       });
     }
   }, [allVacancies]);
 
-  const fetchEmployeeData = (employeeId) => {
-    dispatch(getSingleEmploye(employeeId));
-  };
+  // const fetchEmployeeData = (employeeId) => {
+  //   dispatch(getSingleEmploye(employeeId));
+  // };
 
   useEffect(() => {
     if (singleEmployeeData) {
@@ -121,6 +136,22 @@ export default () => {
             to='/admin/todays-interview'
           />
         </Col>
+        <Col xs={12} sm={6} xl={3} className="mb-4">
+          <CounterWidget
+            category="Todays Alloted vacancies"
+            title={vacancyCounts.todayAlloted}
+            // icon={faCashRegister}
+            to='/admin/today-alloted-vac'
+          />
+        </Col>
+        <Col xs={12} sm={6} xl={3} className="mb-4">
+          <CounterWidget
+            category="Todays Completed vacancies"
+            title={vacancyCounts.todayCompleted}
+            // icon={faCashRegister}
+            to='/admin/today-completed-vacancies'
+          />
+        </Col>
       </Row>
       <Card border="light" className="table-wrapper table-responsive shadow-sm">
       <Card.Body className="pt-0">
@@ -133,7 +164,7 @@ export default () => {
               <th className="border-bottom">Pendind Vacancy</th>
               <th className="border-bottom">Completed Vacancy</th>
               <th className="border-bottom">Todays Interview</th>
-
+              <th className="border-bottom">Todays Completed Vacancy</th>
             </tr>
           </thead>
          
@@ -150,6 +181,13 @@ export default () => {
           const employeeCompletedVacancies = employeeData.allotedVacancies?.filter(
             vacancy => vacancy.status === "completed"
           ).length || 0;
+          const today2 = new Date().toLocaleDateString('en-GB');
+
+          const todayCompletedVac = employeeData.allotedVacancies?.filter(vacancy => {
+            const completedDate = new Date(vacancy.completedDate).toLocaleDateString('en-GB');
+            return completedDate ==today2;
+          }).length || 0
+
 
           const today = new Date().toLocaleDateString('en-GB');
           const interviewCount = employeeData.allotedVacancies?.filter(vac => {
@@ -166,6 +204,7 @@ export default () => {
              <td className="border-bottom"><Link to={`/pending-vacancies/${idx}`}>{employeePendingVacancies}</Link></td>
               <td className="border-bottom"><Link to={`/completed-vacancies/${idx}`}>{employeeCompletedVacancies}</Link></td>
               <td className="border-bottom"><Link to={`/todays-interviews/${idx}`}>{interviewCount}</Link></td>
+              <td className="border-bottom"><Link to={`/todays-completed-vacancies/${idx}`}>{todayCompletedVac}</Link></td>
               </tr>
               </tbody>
           );
