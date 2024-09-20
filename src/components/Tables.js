@@ -200,8 +200,11 @@ export const CandidateTable = () => {
   const [statusFilter, setStatusFilter] = useState(''); // State for status filter
   const [cityFilter, setCityFilter] = useState(''); // State for city filter
   const [qualificationFilter, setQualificationFilter] = useState(''); // State for highest qualification filter
+  const [currentPage, setCurrentPage] = useState(1); // State for current page
+  const [itemsPerPage, setItemsPerPage] = useState(10); // Default number of items per page
 
   const currentEmployee = useSelector(state => state.employee?.employee);
+  
   useEffect(() => {
     if (currentEmployee?._id) {
       dispatch(getSingleEmploye(currentEmployee._id));
@@ -209,9 +212,8 @@ export const CandidateTable = () => {
     dispatch(candidateList());
   }, [dispatch, currentEmployee]);
 
-  const candidateListState = useSelector(state => state?.candidate?.candidatelist);
+  const candidateListState = useSelector(state => state?.candidate?.candidatelist || []);
   const vacancyListState = useSelector(state => state?.employee?.singleEmployee?.allotedVacancies);
-  const totalCandidates = candidateListState?.length;
 
   const deleteHandler = (id) => {
     dispatch(deleteCandidate(id));
@@ -251,6 +253,25 @@ export const CandidateTable = () => {
     (qualificationFilter === '' || candidate.highestQualification.toLowerCase().startsWith(qualificationFilter.toLowerCase()))
   );
 
+  // Get current candidates based on pagination
+  const indexOfLastCandidate = currentPage * itemsPerPage;
+  const indexOfFirstCandidate = indexOfLastCandidate - itemsPerPage;
+  const currentCandidates = filteredCandidates?.slice(indexOfFirstCandidate, indexOfLastCandidate);
+
+  // Calculate total pages
+  const totalPages = Math.ceil(filteredCandidates?.length / itemsPerPage);
+
+  // Pagination handling
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  // Handle change in items per page
+  const handleItemsPerPageChange = (e) => {
+    setItemsPerPage(Number(e.target.value));
+    setCurrentPage(1); // Reset to first page when items per page change
+  };
+
   return (
     <>
       {/* Search Input and Filters */}
@@ -289,7 +310,25 @@ export const CandidateTable = () => {
           style={{ width: '22%' }}
         />
       </div>
+      <Form.Group controlId="itemsPerPageSelect" className="mt-3 d-flex align-items-center mb-2">
+              <Form.Label>Show entries:</Form.Label>
+              <Form.Control
+                as="select"
+                value={itemsPerPage}
+                onChange={handleItemsPerPageChange}
+                style={{ width: '120px', marginLeft: '10px' }}
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+                <option value={30}>30</option>
+                <option value={40}>40</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+              </Form.Control>
+            </Form.Group>
 
+      {/* Table with Candidates */}
       <Card border="light" className="table-wrapper table-responsive shadow-sm">
         <Card.Body className="pt-0">
           <Table hover className="user-table align-items-center">
@@ -304,11 +343,11 @@ export const CandidateTable = () => {
                 <th className="border-bottom">Status</th>
                 <th className="border-bottom">City</th>
                 <th className="border-bottom">Qualification</th>
-                <th className="border-bottom"> Action </th>
+                <th className="border-bottom">Action</th>
               </tr>
             </thead>
             <tbody>
-              {filteredCandidates?.map((candidate, idx) => (
+              {currentCandidates?.map((candidate, idx) => (
                 <tr key={candidate._id}>
                   <td className="border-bottom">
                     <Form.Check
@@ -317,7 +356,7 @@ export const CandidateTable = () => {
                       onChange={() => handleCheckboxChange(candidate._id)}
                     />
                   </td>
-                  <td className="border-bottom">{idx + 1}</td>
+                  <td className="border-bottom">{(currentPage - 1) * itemsPerPage + idx + 1}</td>
                   <td className="border-bottom">
                     <Link to={`/candidate-detail/${candidate._id}`}>{candidate.name}</Link>
                   </td>
@@ -333,29 +372,214 @@ export const CandidateTable = () => {
               ))}
             </tbody>
           </Table>
+
+          {/* Pagination and Items per Page Dropdown */}
+          <div className="d-flex justify-content-between align-items-center">
+            <Pagination className="mt-3">
+              {[...Array(totalPages).keys()]?.map(pageNumber => (
+                <Pagination.Item
+                  key={pageNumber + 1}
+                  active={pageNumber + 1 === currentPage}
+                  onClick={() => handlePageChange(pageNumber + 1)}
+                >
+                  {pageNumber + 1}
+                </Pagination.Item>
+              ))}
+            </Pagination>
+
+            {/* Items per page selection */}
+          </div>
         </Card.Body>
       </Card>
 
       {/* Select Vacancy and Apply Button */}
       <div className="mt-3">
-        <Form.Group controlId="selectVacancy">
+        <Form.Group controlId="selectVacancy text-black">
           <Form.Label>Select Vacancy</Form.Label>
           <Form.Control as="select" value={selectedVacancy} onChange={handleVacancyChange}>
             <option value="">Select a vacancy</option>
-            {vacancyListState?.filter(vacancy => vacancy.status === 'Pending').map(vacancy => (
-              <option key={vacancy._id} value={vacancy._id}>
-                {vacancy.role} - {vacancy.companyName}- {vacancy.jobLocation}
-              </option>
-            ))}
+            {vacancyListState?.map(vacancy => (
+  vacancy.status === 'Pending' ? (
+    <option key={vacancy._id} value={vacancy._id}>
+      {vacancy.role}-{vacancy.companyName}-{vacancy.jobLocation}
+    </option>
+  ) : null
+))}
+
           </Form.Control>
         </Form.Group>
-        <Button className="mt-2" onClick={handleApply} disabled={!selectedCandidates.length || !selectedVacancy}>
-          Shortlist Candidates
+        <Button className="mt-2" onClick={handleApply} disabled={selectedCandidates.length === 0 || !selectedVacancy}>
+          Apply
         </Button>
       </div>
     </>
   );
 };
+
+// export const CandidateTable = () => {
+//   const dispatch = useDispatch();
+//   const [selectedCandidates, setSelectedCandidates] = useState([]);
+//   const [selectedVacancy, setSelectedVacancy] = useState('');
+//   const [searchTerm, setSearchTerm] = useState(''); // State for search input
+//   const [statusFilter, setStatusFilter] = useState(''); // State for status filter
+//   const [cityFilter, setCityFilter] = useState(''); // State for city filter
+//   const [qualificationFilter, setQualificationFilter] = useState(''); // State for highest qualification filter
+
+//   const currentEmployee = useSelector(state => state.employee?.employee);
+//   useEffect(() => {
+//     if (currentEmployee?._id) {
+//       dispatch(getSingleEmploye(currentEmployee._id));
+//     }
+//     dispatch(candidateList());
+//   }, [dispatch, currentEmployee]);
+
+//   const candidateListState = useSelector(state => state?.candidate?.candidatelist);
+//   const vacancyListState = useSelector(state => state?.employee?.singleEmployee?.allotedVacancies);
+//   const totalCandidates = candidateListState?.length;
+
+//   const deleteHandler = (id) => {
+//     dispatch(deleteCandidate(id));
+//   };
+
+//   const handleCheckboxChange = (candidateId) => {
+//     setSelectedCandidates(prevSelected =>
+//       prevSelected.includes(candidateId)
+//         ? prevSelected.filter(id => id !== candidateId)
+//         : [...prevSelected, candidateId]
+//     );
+//   };
+
+//   const handleSelectAllChange = (e) => {
+//     if (e.target.checked) {
+//       setSelectedCandidates(candidateListState.map(candidate => candidate._id));
+//     } else {
+//       setSelectedCandidates([]);
+//     }
+//   };
+
+//   const handleVacancyChange = (e) => {
+//     setSelectedVacancy(e.target.value);
+//   };
+
+//   const handleApply = () => {
+//     if (selectedCandidates.length > 0 && selectedVacancy) {
+//       dispatch(applyJob({ selectedCandidates, selectedVacancy }));
+//     }
+//   };
+
+//   // Filter candidates based on search input, status, city, and highest qualification
+//   const filteredCandidates = candidateListState?.filter(candidate =>
+//     candidate.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+//     (statusFilter === '' || candidate.status === statusFilter) &&
+//     (cityFilter === '' || candidate.city?.toLowerCase().includes(cityFilter.toLowerCase())) &&
+//     (qualificationFilter === '' || candidate.highestQualification.toLowerCase().startsWith(qualificationFilter.toLowerCase()))
+//   );
+
+//   return (
+//     <>
+//       {/* Search Input and Filters */}
+//       <div className="mb-3 d-flex justify-content-between align-items-center">
+//         <Form.Control
+//           type="text"
+//           placeholder="Search by candidate name..."
+//           value={searchTerm}
+//           onChange={(e) => setSearchTerm(e.target.value)}
+//           style={{ width: '22%' }}
+//         />
+//         <Form.Control
+//           as="select"
+//           value={statusFilter}
+//           onChange={(e) => setStatusFilter(e.target.value)}
+//           style={{ width: '22%' }}
+//         >
+//           <option value="">Filter by status</option>
+//           <option value="Pending">Pending</option>
+//           <option value="shortlisted">ShortListed</option>
+//           <option value="Selected">Selected</option>
+//           <option value="Rejected">Rejected</option>
+//         </Form.Control>
+//         <Form.Control
+//           type="text"
+//           placeholder="Search by city..."
+//           value={cityFilter}
+//           onChange={(e) => setCityFilter(e.target.value)}
+//           style={{ width: '22%' }}
+//         />
+//         <Form.Control
+//           type="text"
+//           placeholder="Search by highest qualification..."
+//           value={qualificationFilter}
+//           onChange={(e) => setQualificationFilter(e.target.value)}
+//           style={{ width: '22%' }}
+//         />
+//       </div>
+
+//       <Card border="light" className="table-wrapper table-responsive shadow-sm">
+//         <Card.Body className="pt-0">
+//           <Table hover className="user-table align-items-center">
+//             <thead>
+//               <tr>
+//                 <th className="border-bottom">
+//                   {/* <Form.Check type="checkbox" onChange={handleSelectAllChange} /> */}
+//                 </th>
+//                 <th className="border-bottom">S.NO</th>
+//                 <th className="border-bottom">Candidate Name</th>
+//                 <th className="border-bottom">Mobile</th>
+//                 <th className="border-bottom">Status</th>
+//                 <th className="border-bottom">City</th>
+//                 <th className="border-bottom">Qualification</th>
+//                 <th className="border-bottom"> Action </th>
+//               </tr>
+//             </thead>
+//             <tbody>
+//               {filteredCandidates?.map((candidate, idx) => (
+//                 <tr key={candidate._id}>
+//                   <td className="border-bottom">
+//                     <Form.Check
+//                       type="checkbox"
+//                       checked={selectedCandidates.includes(candidate._id)}
+//                       onChange={() => handleCheckboxChange(candidate._id)}
+//                     />
+//                   </td>
+//                   <td className="border-bottom">{idx + 1}</td>
+//                   <td className="border-bottom">
+//                     <Link to={`/candidate-detail/${candidate._id}`}>{candidate.name}</Link>
+//                   </td>
+//                   <td className="border-bottom">{candidate.mobile}</td>
+//                   <td className="border-bottom">{candidate.status}</td>
+//                   <td className="border-bottom">{candidate.city}</td>
+//                   <td className="border-bottom">{candidate.highestQualification}</td>
+//                   <td className="border-bottom cursor-pointer">
+//                     <FontAwesomeIcon onClick={() => deleteHandler(candidate._id)} icon={faTrashAlt} />
+//                     <Link className="ms-2" to={`/edit-candidate/${candidate._id}`}><FontAwesomeIcon icon={faEdit} /></Link>
+//                   </td>
+//                 </tr>
+//               ))}
+//             </tbody>
+//           </Table>
+//         </Card.Body>
+//       </Card>
+
+//       {/* Select Vacancy and Apply Button */}
+//       <div className="mt-3">
+//         <Form.Group controlId="selectVacancy">
+//           <Form.Label>Select Vacancy</Form.Label>
+//           <Form.Control as="select" value={selectedVacancy} onChange={handleVacancyChange}>
+//             <option value="">Select a vacancy</option>
+//             {vacancyListState?.filter(vacancy => vacancy.status === 'Pending').map(vacancy => (
+//               <option key={vacancy._id} value={vacancy._id}>
+//                 {vacancy.role} - {vacancy.companyName}- {vacancy.jobLocation}
+//               </option>
+//             ))}
+//           </Form.Control>
+//         </Form.Group>
+//         <Button className="mt-2" onClick={handleApply} disabled={!selectedCandidates.length || !selectedVacancy}>
+//           Shortlist Candidates
+//         </Button>
+//       </div>
+//     </>
+//   );
+// };
 
 
 
@@ -743,9 +967,14 @@ export const AdminTable = ({vacancyListState}) => {
   );
 };
 
-export const AllCompletedVacancyTable = ({todayVac}) => {
+export const AllCompletedVacancyTable = ({ todayVac }) => {
   const dispatch = useDispatch();
   const today = new Date().toLocaleDateString('en-GB');
+
+  // States for search inputs
+  const [locationSearch, setLocationSearch] = useState("");
+  const [companySearch, setCompanySearch] = useState("");
+  const [jobTitleSearch, setJobTitleSearch] = useState(""); // New state for job title search
 
   useEffect(() => {
     dispatch(getAllVacancies());
@@ -753,42 +982,84 @@ export const AllCompletedVacancyTable = ({todayVac}) => {
   }, [dispatch]);
 
   const statusChangeHandler = (id, status) => {
-    dispatch(editVacancy({ id, status,isAdmin:true }));
+    dispatch(editVacancy({ id, status, isAdmin: true }));
   };
 
   let vacancyListState = useSelector((state) => state?.vacancy?.allVacancies);
 
-  if(todayVac){
-    vacancyListState = vacancyListState.filter(vacancy => {
+  if (todayVac) {
+    vacancyListState = vacancyListState.filter((vacancy) => {
       const completedDate = new Date(vacancy.completedDate).toLocaleDateString('en-GB');
-      return completedDate ==today;
-    })
+      return completedDate == today;
+    });
   }
 
   const [updatedVacancy, setUpdatedVacancy] = useState({});
 
-  // Function to handle mail status change
   const handleMailStatusChange = (vacancyId, status) => {
-    setUpdatedVacancy({ ...updatedVacancy, [vacancyId]: { ...updatedVacancy[vacancyId], mail: status } });
+    setUpdatedVacancy({
+      ...updatedVacancy,
+      [vacancyId]: { ...updatedVacancy[vacancyId], mail: status },
+    });
     dispatch(editVacancy({ id: vacancyId, mail: status }));
   };
 
-  // Function to handle interview date change
   const handleInterviewDateChange = (vacancyId, date) => {
-    setUpdatedVacancy({ ...updatedVacancy, [vacancyId]: { ...updatedVacancy[vacancyId], interviewSheduled: date } });
+    setUpdatedVacancy({
+      ...updatedVacancy,
+      [vacancyId]: { ...updatedVacancy[vacancyId], interviewSheduled: date },
+    });
     dispatch(editVacancy({ id: vacancyId, interviewSheduled: date }));
   };
 
-  // Function to format the interview date to YYYY-MM-DD
   const formatInterviewDate = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
-    return date.toISOString().split('T')[0]; // Returns the date in YYYY-MM-DD format
+    return date.toISOString().split("T")[0];
   };
+
+  // Filter vacancies based on search inputs
+  const filteredVacancyList = vacancyListState
+    ?.filter((vacancy) => 
+      vacancy.companyName.toLowerCase().includes(companySearch.toLowerCase()) &&
+      vacancy.jobLocation.toLowerCase().includes(locationSearch.toLowerCase()) &&
+      vacancy.role.toLowerCase().includes(jobTitleSearch.toLowerCase()) // New filter for job title
+    )
+    ?.filter((vacancy) => vacancy.status === 'completed')
+    ?.sort((a, b) => {
+      const mailA = updatedVacancy[a._id]?.mail || a.mail;
+      const mailB = updatedVacancy[b._id]?.mail || b.mail;
+      return mailA === 'pending' && mailB !== 'pending' ? -1 : 1;
+    });
 
   return (
     <Card border="light" className="table-wrapper table-responsive shadow-sm">
       <Card.Body className="pt-0">
+        {/* Search Inputs */}
+        <div className="d-flex my-3">
+          <input
+            type="text"
+            placeholder="Search by company name"
+            className="form-control me-2"
+            value={companySearch}
+            onChange={(e) => setCompanySearch(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Search by location"
+            className="form-control me-2"
+            value={locationSearch}
+            onChange={(e) => setLocationSearch(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Search by job title"
+            className="form-control"
+            value={jobTitleSearch}
+            onChange={(e) => setJobTitleSearch(e.target.value)}
+          />
+        </div>
+
         <Table hover className="user-table align-items-center">
           <thead>
             <tr>
@@ -796,65 +1067,66 @@ export const AllCompletedVacancyTable = ({todayVac}) => {
               <th className="border-bottom">Job Title</th>
               <th className="border-bottom">Company Name</th>
               <th className="border-bottom">Location</th>
+              <th className="border-bottom px-5">Mail Status</th>
               <th className="border-bottom">Salary</th>
               <th className="border-bottom">Alloted To</th>
               <th className="border-bottom px-6">Status</th>
               <th className="border-bottom">Dead Line</th>
               <th className="border-bottom">Completed At</th>
-              <th className="border-bottom">Mail Status</th>
               <th className="border-bottom">Interview Scheduled</th>
             </tr>
           </thead>
           <tbody>
-            {vacancyListState?.map((vacancy, idx) =>
-              vacancy.status === 'completed' ? (
-                <tr key={vacancy._id}>
-                  <td className="border-bottom">{idx + 1}</td>
-                  <td className="border-bottom">
-                    <Link to={`/candidate-shortlisted/${vacancy._id}`}>{vacancy.role}</Link>
-                  </td>
-                  <td className="border-bottom">{vacancy.companyName}</td>
-                  <td className="border-bottom">{vacancy.jobLocation}</td>
-                  <td className="border-bottom">{vacancy.salary}</td>
-                  <td className="border-bottom">{vacancy.allotedTo?.name}</td>
-                  <td className="border-bottom">
-                    <select
-                      value={vacancy.status} // Ensure this reflects the current status
-                      onChange={(e) => statusChangeHandler(vacancy._id, e.target.value)}
-                      className="form-select px-2"
-                    >
-                      <option value="completed">Completed</option>
-                      <option value="Pending">Pending</option>
-                    </select>
-                  </td>
-                  <td className="border-bottom">{vacancy.deadline}</td>
-                  <td className="border-bottom">{new Date(vacancy.updatedAt).toLocaleString()}</td>
-                  <td className="border-bottom">
-                    <Form.Control
-                      as="select"
-                      value={updatedVacancy[vacancy._id]?.mail || vacancy.mail}
-                      onChange={(e) => handleMailStatusChange(vacancy._id, e.target.value)}
-                    >
-                      <option value="pending">Pending</option>
-                      <option value="sent">Sent</option>
-                    </Form.Control>
-                  </td>
-                  <td className="border-bottom">
-                    <input
-                      type="date"
-                      value={formatInterviewDate(updatedVacancy[vacancy._id]?.interviewSheduled || vacancy.interviewSheduled)}
-                      onChange={(e) => handleInterviewDateChange(vacancy._id, e.target.value)}
-                    />
-                  </td>
-                </tr>
-              ) : null
-            )}
+            {filteredVacancyList?.map((vacancy, idx) => (
+              <tr key={vacancy._id} style={{ backgroundColor: vacancy.mail === 'pending' ? 'rgba(220, 53, 69, 0.3)' : '' }}>
+                <td className="border-bottom">{idx + 1}</td>
+                <td className="border-bottom">
+                  <Link to={`/candidate-shortlisted/${vacancy._id}`}>{vacancy.role}</Link>
+                </td>
+                <td className="border-bottom">{vacancy.companyName}</td>
+                <td className="border-bottom">{vacancy.jobLocation}</td>
+                <td className="border-bottom">
+                  <Form.Control
+                    as="select"
+                    value={updatedVacancy[vacancy._id]?.mail || vacancy.mail}
+                    onChange={(e) => handleMailStatusChange(vacancy._id, e.target.value)}
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="sent">Sent</option>
+                  </Form.Control>
+                </td>
+                <td className="border-bottom">{vacancy.salary}</td>
+                <td className="border-bottom">{vacancy.allotedTo?.name}</td>
+                <td className="border-bottom">
+                  <select
+                    value={vacancy.status}
+                    onChange={(e) => statusChangeHandler(vacancy._id, e.target.value)}
+                    className="form-select px-2"
+                  >
+                    <option value="completed">Completed</option>
+                    <option value="Pending">Pending</option>
+                  </select>
+                </td>
+                <td className="border-bottom">{vacancy.deadline}</td>
+                <td className="border-bottom">{new Date(vacancy.updatedAt).toLocaleString()}</td>
+                <td className="border-bottom">
+                  <input
+                    type="date"
+                    value={formatInterviewDate(updatedVacancy[vacancy._id]?.interviewSheduled || vacancy.interviewSheduled)}
+                    onChange={(e) => handleInterviewDateChange(vacancy._id, e.target.value)}
+                  />
+                </td>
+              </tr>
+            ))}
           </tbody>
         </Table>
       </Card.Body>
     </Card>
   );
 };
+
+
+
 
 
 export const VacancyTableByCompany = ({vacancyListState}) => {
@@ -974,7 +1246,7 @@ export const AllotedVacansiesByEmployee = ({ vacancyListState,pending }) => {
         <Table hover className="user-table align-items-center">
           <thead>
             <tr>
-              <th className="border-bottom">S.NO</th>
+              {/* <th className="border-bottom">S.NO</th> */}
               <th className="border-bottom">Job Title</th>
               <th className="border-bottom">Company Name</th>
               <th className="border-bottom">Location</th>
@@ -988,8 +1260,9 @@ export const AllotedVacansiesByEmployee = ({ vacancyListState,pending }) => {
           <tbody>
             {vacancyListState?.map((vacancy, idx) => (
               !pending ? (
-                <tr key={vacancy._id}>
-                  <td className="border-bottom">{idx + 1}</td>
+                <tr key={vacancy._id} >
+
+                  {/* <td className="border-bottom"></td> */}
                   <td className="border-bottom">
                     <Link to={`/candidate-shortlisted/${vacancy._id}`}>{vacancy.role}</Link>
                   </td>
@@ -1010,9 +1283,16 @@ export const AllotedVacansiesByEmployee = ({ vacancyListState,pending }) => {
                     </select>
                   </td>
                 </tr>
-              ) : (vacancy.status === 'Pending') ? (
-                <tr key={vacancy._id}>
-                  <td className="border-bottom">{idx + 1}</td>
+              ) : (vacancy.status === 'Pending' && new Date(vacancy.deadline).toLocaleDateString() >= new Date().toLocaleDateString() ) ? (
+                <tr
+                key={vacancy._id}
+                style={{
+                  backgroundColor: new Date(vacancy.deadline).toLocaleDateString() === new Date().toLocaleDateString() ? 'rgba(220, 53, 69, 0.3)' : 'transparent'
+                }}
+                className="border-bottom"
+              >
+              
+                  {/* <td className="border-bottom">{idx + 1}</td> */}
                   <td className="border-bottom">
                     <Link to={`/candidate-shortlisted/${vacancy._id}`}>{vacancy.role}</Link>
                   </td>
@@ -1020,6 +1300,7 @@ export const AllotedVacansiesByEmployee = ({ vacancyListState,pending }) => {
                   <td className="border-bottom">{vacancy.jobLocation}</td>
                   <td className="border-bottom">{vacancy.salary}</td>
                   <td className="border-bottom">{vacancy.deadline}</td>
+
                   <td className="border-bottom">{vacancy.gender}</td>
                   <td className="border-bottom">{vacancy.jobFunction}</td>
                   <td className="border-bottom">
@@ -1034,6 +1315,103 @@ export const AllotedVacansiesByEmployee = ({ vacancyListState,pending }) => {
                   </td>
                 </tr>
               ) : null
+            ))}
+          </tbody>
+        </Table>
+      </Card.Body>
+    </Card>
+  );
+};
+
+export const IncompleteVacanciesTable = ({ vacancyListState }) => {
+  const dispatch = useDispatch();
+  
+  // State to keep track of the reason for each vacancy
+  const [reasons, setReasons] = useState({});
+
+  // Handler to update the status of a specific vacancy
+  const statusChangeHandler = (id, status) => {
+    dispatch(editVacancy({ id, status }));
+  };
+
+  // Handler to capture the reason input
+  const handleReasonChange = (id, reason) => {
+    setReasons((prev) => ({
+      ...prev,
+      [id]: reason, // Update reason for the specific vacancy
+    }));
+  };
+
+  // Handler to dispatch the reason update on Enter key press
+  const handleReasonSubmit = (e, id) => {
+    if (e.key === 'Enter') {
+      e.preventDefault(); // Prevent new line in textarea
+      const reason = reasons[id];
+      if (reason) {
+        dispatch(editVacancy({ id, reason })); // Dispatch the update for the reason
+        alert("Reason updated successfully!"); // Optional alert, can be removed
+      }
+    }
+  };
+
+  return (
+    <Card border="light" className="table-wrapper table-responsive shadow-sm">
+      <Card.Body className="pt-0">
+        <Table hover className="user-table align-items-center">
+          <thead>
+            <tr>
+              <th className="border-bottom">Job Title</th>
+              <th className="border-bottom">Company Name</th>
+              <th className="border-bottom">Location</th>
+              <th className="border-bottom">Salary</th>
+              <th className="border-bottom">Deadline</th>
+              <th className="border-bottom">Gender</th>
+              <th className="border-bottom">Job Function</th>
+              <th className="border-bottom px-6">Status</th>
+              <th className="border-bottom px-8">Reason</th> {/* New Reason Field */}
+            </tr>
+          </thead>
+          <tbody>
+            {vacancyListState?.map((vacancy) => (
+              <tr
+                key={vacancy._id}
+                style={{
+                  backgroundColor: new Date(vacancy.deadline).toLocaleDateString() === new Date().toLocaleDateString()
+                    ? 'rgba(220, 53, 69, 0.3)'
+                    : 'transparent',
+                }}
+                className="border-bottom"
+              >
+                <td className="border-bottom">
+                  <Link to={`/candidate-shortlisted/${vacancy._id}`}>{vacancy.role}</Link>
+                </td>
+                <td className="border-bottom">{vacancy.companyName}</td>
+                <td className="border-bottom">{vacancy.jobLocation}</td>
+                <td className="border-bottom">{vacancy.salary}</td>
+                <td className="border-bottom">{vacancy.deadline}</td>
+                <td className="border-bottom">{vacancy.gender}</td>
+                <td className="border-bottom">{vacancy.jobFunction}</td>
+                <td className="border-bottom">
+                  <select
+                    value={vacancy.status} // Ensure this reflects the current status
+                    onChange={(e) => statusChangeHandler(vacancy._id, e.target.value)}
+                    className="form-select"
+                  >
+                    <option value="completed">Completed</option>
+                    <option value="Pending">Pending</option>
+                  </select>
+                </td>
+                <td className="border-bottom">
+                  <textarea
+                    value={reasons[vacancy._id] || vacancy.reason || ''} // Populate textarea with existing reason or reason from state
+                    onChange={(e) => handleReasonChange(vacancy._id, e.target.value)} // Update local reason state
+                    onKeyDown={(e) => handleReasonSubmit(e, vacancy._id)} // Dispatch when Enter is pressed
+                    placeholder="Enter reason"
+                    rows={2}
+                    className="form-control"
+                  />
+                </td>
+              </tr>
             ))}
           </tbody>
         </Table>

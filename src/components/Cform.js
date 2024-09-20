@@ -17,6 +17,7 @@ export const CandidateForm = () => {
     email: '',
     // password: '',
     highestQualification: '',
+    highestQualificationSubject:'',
     postGradApplyYear: '',
     postGradPassingYear: '',
     postGradPercentage: '',
@@ -220,6 +221,20 @@ export const CandidateForm = () => {
               <option value="ITI">ITI</option>
             </Form.Control>
           </Form.Group>
+
+          <Col>
+                  <Form.Group controlId="highestQualificationSubject">
+                    <Form.Label> Highest Qualification Course</Form.Label>
+                    <Form.Control
+                      type="text"
+                      name="highestQualificationSubject"
+                      value={formData.highestQualificationSubject}
+                      onChange={handleChange}
+                      placeholder=' Highest Qualification Course'
+                    />
+                  </Form.Group>
+                </Col>
+         
 
           {/* Post Graduation Fields */}
           {formData.highestQualification === "Post Graduation" && (

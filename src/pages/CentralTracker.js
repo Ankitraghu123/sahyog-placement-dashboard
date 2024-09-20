@@ -56,8 +56,9 @@ export default () => {
     'Consultant Name':  'Sahyog job and multi work solutio', // Consultant Name
     'Name Of Candidate': candidate.name || '', // Name Of Candidate
     'Phone No': candidate.mobile || '', // Phone No
-    'Location':  (candidate.state && candidate.city) ? `${candidate.state} - ${candidate.city}`: '', // Location
-    'Qualification': candidate.highestQualification || '', // Qualification
+    'Location':  candidate.city ? ` ${candidate.city}`: 'NA', // Location
+    'Qualification last degree': candidate.postGradSubject ? `Post Graduation- ${candidate.postGradSubject} ` : candidate.gradSubject ? `Graduation - ${candidate.gradSubject} ` : 'NA' , // Qualification
+    'Qualification last degree Percentage': candidate.postGradSubject ? ` ${candidate.postGradPercentage} ` : candidate.gradSubject ? ` ${candidate.gradPercentage} ` : 'NA' , // Qualification
     'Last Company Name': candidate.lastCompanyName || '', // Last Company Name
     'Industry': candidate.industry || '', // Industry
     'Experience': candidate.experience || '', // Experience
@@ -66,7 +67,8 @@ export default () => {
     'Age': candidate.dob ? calculateAge(candidate.dob) : '', // Age (calculate if needed)
     'Gender': candidate.gender || '', // Gender
     'Mail ID': candidate.email || '', // Mail ID
-    'Qualification Percentage': candidate.qualificationPercentage || '', // Qualification Percentage
+    'Second Qualification Degree':  candidate.gradSubject ? `Graduation- ${candidate.gradSubject} ` : candidate.twelfthSubject ? `Twelfth- ${candidate.twelfthSubject} ` : 'NA' , // Qualification Percentage
+    'Second Qualification Percentage': candidate.gradSubject ? ` ${candidate.gradPercentage} ` : candidate.twelfthSubject ? `${candidate.twelfthPercentage} ` : 'NA' , // Qualification Percentage
     'Hsc Year': candidate.twelfthPassingYear || '', // Hsc Year
     'Hsc Percentage': candidate.twelfthPercentage || '', // Hsc Percentage
     'SSc Year': candidate.tenthPassingYear || '', // SSc Year
@@ -111,7 +113,8 @@ export default () => {
                
                 <th style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>Phone No</th>
                 <th style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>Location</th>
-                <th style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>Qualification </th>
+                <th style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>highest Qualification </th>
+                <th style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>highest Qualification percentage </th>
                 <th style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>Last Company Name</th>
                 <th style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>Industry</th>
                 <th style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>Experience</th>
@@ -121,8 +124,8 @@ export default () => {
                 <th style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>Gender</th>
                 <th style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>Mail ID</th>
 
-                <th style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>Qualification Percentage</th>
-                {/* <th style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>Percentage</th> */}
+                <th style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>Second Qualification </th>
+                <th style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>Second Qualification Percentage</th>
 
                 <th style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>Hsc Year</th>
                 <th style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>Percentage</th>
@@ -164,8 +167,11 @@ export default () => {
                     {/* <Link to={`/candidate-detail/${candidate._id}`}>{candidate.name}</Link> */}
                   </td>
                   <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>{candidate.mobile}</td>
-                  <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>{candidate.state}-{candidate.city}</td>
-                  <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>{candidate.highestQualification}</td>
+                  <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>{candidate.city}</td>
+                  <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>{candidate.postGradSubject ? `Post Graduation- ${candidate.postGradSubject} ` : candidate.gradSubject ? `Graduation - ${candidate.gradSubject} ` : 'NA'}</td>
+                  <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>
+                    {candidate.postGradSubject ? ` ${candidate.postGradPercentage} ` : candidate.gradSubject ? `${candidate.gradPercentage} ` : 'NA'}
+                  </td>
                   <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}></td>
                   <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}></td>
                   <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}></td>
@@ -174,7 +180,12 @@ export default () => {
                   <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>{calculateAge(candidate.dob)}</td>
                   <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>{candidate.gender}</td>
                   <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>{candidate.email}</td>
-                  <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}></td>
+                  <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>
+                  {candidate.gradSubject ? `Graduation- ${candidate.gradSubject} ` : candidate.twelfthSubject ? `Twelfth- ${candidate.twelfthSubject} ` : 'NA'}
+                  </td>
+                  <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>
+                  {candidate.gradSubject ? ` ${candidate.gradPercentage} ` : candidate.twelfthSubject ? ` ${candidate.twelfthPercentage} ` : 'NA'}
+                  </td>
 
                   <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>{candidate.tenthPassingYear}</td>
                   <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>{candidate.tenthPercentage}</td>

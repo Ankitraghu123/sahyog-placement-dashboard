@@ -52,12 +52,12 @@ export default function CandidateList() {
       "Candidate Name": candidate.name || '',
       "Years of exp": candidate.yearsOfExperience || '',
       "Current CTC": candidate.currentCTC || '',
-      "Location": (candidate.state && candidate.city) ? `${candidate.state} - ${candidate.city}`: '',
+      "Location": candidate.city ? `${candidate.city}`: 'NA',
       "Current Designation": candidate.currentDesignation || '',
       "Current Organization": candidate.currentOrganization || '',
       "Contact Details": candidate.mobile || '',
       "Email ID": candidate.email || '',
-      "Higher Qualification": candidate.highestQualification || '',
+      "Higher Qualification": candidate.highestQualification ? `${candidate.highestQualification} - ${candidate.highestQualificationSubject}` : 'NA',
       "Exp CTC": candidate.expectedCTC || '',
       "Diploma Part / Full": candidate.diplomaDetails || '',
       "Graduation %": candidate.gradPercentage || '',
@@ -149,12 +149,12 @@ export default function CandidateList() {
       <td className="border-bottom border-warning">{candidate.name}</td>
       <td className="border-bottom border-warning">{candidate.yearsOfExperience}</td>
       <td className="border-bottom border-warning">{candidate.currentCTC}</td>
-      <td className="border-bottom border-warning">{candidate.state}- {candidate.city}</td>
+      <td className="border-bottom border-warning"> {candidate.city}</td>
       <td className="border-bottom border-warning">{candidate.currentDesignation}</td>
       <td className="border-bottom border-warning">{candidate.currentOrganization}</td>
       <td className="border-bottom border-warning">{candidate.mobile}</td>
       <td className="border-bottom border-warning">{candidate.email}</td>
-      <td className="border-bottom border-warning">{candidate.highestQualification}</td>
+      <td className="border-bottom border-warning">{candidate.highestQualification}-{candidate.highestQualificationSubject}</td>
       <td className="border-bottom border-warning">{candidate.expectedCTC}</td>
       <td className="border-bottom border-warning">{candidate.diplomaDetails}</td>
       <td className="border-bottom border-warning">{candidate.gradPercentage}</td>

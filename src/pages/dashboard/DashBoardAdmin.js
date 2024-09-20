@@ -164,6 +164,7 @@ export default () => {
               <th className="border-bottom">Pendind Vacancy</th>
               <th className="border-bottom">Completed Vacancy</th>
               <th className="border-bottom">Todays Interview</th>
+              <th className="border-bottom">InCompleted Vacancy</th>
               <th className="border-bottom">Todays Completed Vacancy</th>
             </tr>
           </thead>
@@ -195,6 +196,10 @@ export default () => {
             return interviewDate === today;
           }).length;
 
+          const incompleteVacCount = employeeData.allotedVacancies.filter(vac => 
+            vac.status === "Pending" && new Date(vac.deadline).toLocaleDateString() < new Date().toLocaleDateString()
+          ).length;
+
           return (
             <tbody>
               <tr>
@@ -204,6 +209,7 @@ export default () => {
              <td className="border-bottom"><Link to={`/pending-vacancies/${idx}`}>{employeePendingVacancies}</Link></td>
               <td className="border-bottom"><Link to={`/completed-vacancies/${idx}`}>{employeeCompletedVacancies}</Link></td>
               <td className="border-bottom"><Link to={`/todays-interviews/${idx}`}>{interviewCount}</Link></td>
+              <td className="border-bottom"><Link to={`/incomplete-vac/${idx}`}>{incompleteVacCount}</Link></td>
               <td className="border-bottom"><Link to={`/todays-completed-vacancies/${idx}`}>{todayCompletedVac}</Link></td>
               </tr>
               </tbody>

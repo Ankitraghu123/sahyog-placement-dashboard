@@ -59,7 +59,7 @@ export default () => {
       Gender: candidate.gender || '', // Gender
       PhoneNo: candidate.mobile || '', // Phone No
       EmailID: candidate.email || '', // Mail ID
-      QualificationYear: candidate.highestQualification || '', // Qualification (last degree) year
+      QualificationYear: candidate.postGradSubject ? `PostGraduation -${candidate.postGradSubject}`  : 'NA', // Qualification (last degree) year
       QualificationPercentage: candidate.highestQualificationPercentage || '', // Percentage for Qualification
       HscYear: candidate.twelfthPassingYear || '', // Hsc Year
       HscPercentage: candidate.twelfthPercentage || '', // Percentage for Hsc
@@ -153,8 +153,8 @@ export default () => {
                   <td style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>{candidate.gender}</td>
                   <td style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>{candidate.mobile}</td>
                   <td style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>{candidate.email}</td>
-                  <td style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>{candidate.highestQualification}</td>
-                  <td style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}></td>
+                  <td style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>{candidate.highestQualification ? `Post Graduation - ${candidate.postGradSubject}` : 'NA'}</td>
+                  <td style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>{candidate.postGradPercentage ? candidate.postGradPercentage : 'NA'}</td>
                  
                  
                   <td style={{ borderColor: '#EE9C8D',borderBottomWidth:'2px'}}>{candidate.tenthPassingYear}</td>

@@ -13,6 +13,7 @@ export default () => {
   const [pendingVac, setPendingVac] = useState(0);
   const [mail, setMail] = useState(0);
   const [interview, setInterview] = useState(0);
+  const [inCompleteVac,setIncompleteVac] = useState(0)
 
   const currentEmployee = useSelector(state => state.employee?.employee);
   const employee = useSelector(state => state.employee?.singleEmployee);
@@ -36,6 +37,11 @@ export default () => {
         return interviewDate === today;
       }).length;
       setInterview(interviewCount)
+
+      const incompleteVacCount = employee.allotedVacancies.filter(vac => 
+        vac.status === "Pending" && new Date(vac.deadline).toLocaleDateString() < new Date().toLocaleDateString()
+      ).length;
+      setIncompleteVac(incompleteVacCount)
     }
   }, [employee]);
 
@@ -86,6 +92,14 @@ export default () => {
             title={mail}
             icon={faCashRegister}
             to='/mail-sent'
+          />
+        </Col>
+        <Col xs={12} sm={6} xl={3} className="mb-4">
+          <CounterWidget
+            category="Incomplete vacancies"
+            title={inCompleteVac}
+            icon={faCashRegister}
+            to={`/incomplete-vac/${employee?._id}`}
           />
         </Col>
       </Row>

@@ -23,6 +23,7 @@ export const Routes = {
     TotalPendingVacancies:{path:'/pending-vacancies/:id'},
     TotalAllotedCompletedVacancies:{path:'/completed-vacancies/:id'},
     TodayCompletedEmpVac:{path:'/todays-completed-vacancies/:id'},
+    IncompleteAllotedVac:{path:'/incomplete-vac/:id'},
     TodaysInterview:{path:'/todays-interviews/:id'},
     MailSentVacanciesByEmployee:{path:'/mail-sent'},
     Enquiry:{path:'/enquiry'},
