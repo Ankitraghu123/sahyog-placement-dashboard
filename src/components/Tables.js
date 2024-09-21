@@ -581,8 +581,6 @@ export const CandidateTable = () => {
 //   );
 // };
 
-
-
 export const CandidateTableByJob = () => {
   const [searchTerm, setSearchTerm] = useState(''); // State for search input
   const [statusFilter, setStatusFilter] = useState(''); // State for status filter
@@ -679,127 +677,201 @@ export const CandidateTableByJob = () => {
 };
 
 export const EmployeeTable = () => {
-  const dispatch = useDispatch()
-  const history = useHistory()
-    useEffect(()=>{
-        dispatch(getAllEmployees())
-    },[])
-    const employeeListState = useSelector(state => state?.employee?.allEmployees)
-    const totalEmployee = employeeListState?.length;
-    const deleteHandler = (id)=>{
-      dispatch(deleteEmployee(id))
-      setTimeout(()=>{
-        history.push('/employee-list')
-      },100)
-    }
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [entriesPerPage, setEntriesPerPage] = useState(10); // Default entries per page
 
-    const signInHandler = (email, password) => {
-      dispatch(loginEmployee({ email, password }));
-      setTimeout(() => {
-        history.push('/dashboard'); // Redirect after successful login
-      }, 500);
-    };
-    
+  useEffect(() => {
+    dispatch(getAllEmployees());
+  }, [dispatch]);
+
+  const employeeListState = useSelector(state => state?.employee?.allEmployees);
+
+  // Pagination logic
+  const indexOfLastEmployee = currentPage * entriesPerPage;
+  const indexOfFirstEmployee = indexOfLastEmployee - entriesPerPage;
+  const currentEmployees = employeeListState?.filter(employee => employee?.role !== 'admin').slice(indexOfFirstEmployee, indexOfLastEmployee);
+  
+  const totalEmployees = employeeListState?.filter(employee => employee?.role !== 'admin').length;
+
+  const deleteHandler = (id) => {
+    dispatch(deleteEmployee(id));
+    setTimeout(() => {
+      history.push('/employee-list');
+    }, 100);
+  };
+
+  const signInHandler = (email, password) => {
+    dispatch(loginEmployee({ email, password }));
+    setTimeout(() => {
+      history.push('/dashboard'); // Redirect after successful login
+    }, 500);
+  };
+
   return (
     <Card border="light" className="table-wrapper table-responsive shadow-sm">
       <Card.Body className="pt-0">
+        {/* Entries per page */}
+        <div className="my-3">
+          <label>Entries per page: </label>
+          <select value={entriesPerPage} onChange={(e) => {
+            setEntriesPerPage(Number(e.target.value));
+            setCurrentPage(1); // Reset to the first page when entries per page change
+          }}>
+            <option value={5}>5</option>
+            <option value={10}>10</option>
+            <option value={20}>20</option>
+            <option value={50}>50</option>
+          </select>
+        </div>
+
         <Table hover className="user-table align-items-center">
           <thead>
-          <tr>
-                <th className="border-bottom">S.NO</th>
-                <th className="border-bottom">Employee Name</th>
-                <th className="border-bottom">Mobile</th>
-                <th className="border-bottom">Email</th>
-                <th className="border-bottom">Password</th>
-                 <th className="border-bottom">Action</th> 
-                {/* <th className="border-bottom">Total</th>
-                <th className="border-bottom">Status</th>
-                <th className="border-bottom">Action</th> */}
-                {/* <th className="border-bottom">  <FontAwesomeIcon icon={faTrashAlt} /> </th> */}
-              </tr>
+            <tr>
+              <th className="border-bottom">S.NO</th>
+              <th className="border-bottom">Employee Name</th>
+              <th className="border-bottom">Mobile</th>
+              <th className="border-bottom">Email</th>
+              <th className="border-bottom">Password</th>
+              <th className="border-bottom">Action</th>
+              <th className="border-bottom">Sign In</th>
+            </tr>
           </thead>
           <tbody>
-          {
-                employeeListState?.map((employee,idx)=> {
-                return employee?.role !== 'admin'? <tr>
-                <td className="border-bottom">{idx+1}</td>
+            {currentEmployees?.map((employee, idx) => (
+              <tr key={employee._id}>
+                <td className="border-bottom">{indexOfFirstEmployee + idx + 1}</td> {/* Calculate S.No */}
                 <td className="border-bottom"><Link to={`/employee-detail/${employee._id}`}>{employee.name}</Link></td>
                 <td className="border-bottom">{employee.mobile}</td>
                 <td className="border-bottom">{employee.email}</td>
                 <td className="border-bottom">{employee.storePassword}</td>
-                <th className="border-bottom cursor-pointer" >  <FontAwesomeIcon onClick={()=> deleteHandler(employee._id)} icon={faTrashAlt} /> 
-                <Link className="ms-2" to={`/edit-employee/${employee._id}`}><FontAwesomeIcon icon={faEdit} /></Link></th>
-                <td className="border-bottom"> <button onClick={() => signInHandler(employee.email, employee.storePassword)} className="btn btn-primary btn-sm">
-                      Sign In
-                    </button></td>
-                </tr> : null
-              }) 
-            } 
-          
-            
+                <th className="border-bottom cursor-pointer">
+                  <FontAwesomeIcon onClick={() => deleteHandler(employee._id)} icon={faTrashAlt} />
+                  <Link className="ms-2" to={`/edit-employee/${employee._id}`}><FontAwesomeIcon icon={faEdit} /></Link>
+                </th>
+                <td className="border-bottom">
+                  <button onClick={() => signInHandler(employee.email, employee.storePassword)} className="btn btn-primary btn-sm">
+                    Sign In
+                  </button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </Table>
-      
+
+        {/* Pagination Controls */}
+        <div className="d-flex justify-content-between my-3">
+          <button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
+            Previous
+          </button>
+          <span>Page {currentPage} of {Math.ceil(totalEmployees / entriesPerPage)}</span>
+          <button onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(totalEmployees / entriesPerPage)))} disabled={currentPage === Math.ceil(totalEmployees / entriesPerPage)}>
+            Next
+          </button>
+        </div>
       </Card.Body>
     </Card>
   );
 };
 
+
 export const CompanyTable = () => {
-  const dispatch = useDispatch()
-    useEffect(()=>{
-        dispatch(getAllCompanies())
-    },[])
-    const companyListState = useSelector(state => state?.company?.allCompanies)
-    const totalCompany = companyListState?.length;
-    const deleteHandler = (id)=>{
-      dispatch(deleteCompany(id))
-    }
-    
+  const dispatch = useDispatch();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [entriesPerPage, setEntriesPerPage] = useState(10); // Default entries per page
+
+  useEffect(() => {
+    dispatch(getAllCompanies());
+  }, [dispatch]);
+
+  const companyListState = useSelector(state => state?.company?.allCompanies);
+  
+  // Pagination logic
+  const indexOfLastCompany = currentPage * entriesPerPage;
+  const indexOfFirstCompany = indexOfLastCompany - entriesPerPage;
+  const currentCompanies = companyListState?.slice(indexOfFirstCompany, indexOfLastCompany);
+
+  const totalCompanies = companyListState?.length;
+  
+  const deleteHandler = (id) => {
+    dispatch(deleteCompany(id));
+  };
+
   return (
     <Card border="light" className="table-wrapper table-responsive shadow-sm">
       <Card.Body className="pt-0">
+        {/* Entries per page */}
+        <div className="my-3">
+          <label>Entries per page: </label>
+          <select value={entriesPerPage} onChange={(e) => {
+            setEntriesPerPage(Number(e.target.value));
+            setCurrentPage(1); // Reset to the first page when entries per page change
+          }}>
+            <option value={5}>5</option>
+            <option value={10}>10</option>
+            <option value={20}>20</option>
+            <option value={50}>50</option>
+          </select>
+        </div>
+
         <Table hover className="user-table align-items-center">
           <thead>
-          <tr>
-                <th className="border-bottom">S.NO</th>
-                <th className="border-bottom">Company Name</th>
-                <th className="border-bottom">Company Website</th>
-                <th className="border-bottom">Contact Person Name</th>
-                <th className="border-bottom">Contact Person Mobile</th>
-                <th className="border-bottom">Contact Person Email</th>
-                <th className="border-bottom">City</th>
-                <th className="border-bottom"> Action </th>
-              </tr>
+            <tr>
+              <th className="border-bottom">S.NO</th>
+              <th className="border-bottom">Company Name</th>
+              <th className="border-bottom">Company Website</th>
+              <th className="border-bottom">Contact Person Name</th>
+              <th className="border-bottom">Contact Person Mobile</th>
+              <th className="border-bottom">Contact Person Email</th>
+              <th className="border-bottom">City</th>
+              <th className="border-bottom">Action</th>
+            </tr>
           </thead>
           <tbody>
-          {
-              companyListState?.map((company,idx)=> {
-                return <tr>
-                <td className="border-bottom">{idx+1}</td>
-                <td className="border-bottom"><Link to={`/company-detail/${company._id}`}>{company.companyName}</Link></td>
+            {currentCompanies?.map((company, idx) => (
+              <tr key={company._id}>
+                <td className="border-bottom">{indexOfFirstCompany + idx + 1}</td> {/* Calculate S.No */}
+                <td className="border-bottom">
+                  <Link to={`/company-detail/${company._id}`}>{company.companyName}</Link>
+                </td>
                 <td className="border-bottom">{company.companyWebsite}</td>
                 <td className="border-bottom">{company.contactPersonName}</td>
                 <td className="border-bottom">{company.contactPersonMobile}</td>
                 <td className="border-bottom">{company.contactPersonEmail}</td>
                 <td className="border-bottom">{company.city}</td>
-                <th className="border-bottom cursor-pointer" >  <FontAwesomeIcon onClick={()=> deleteHandler(company._id)} icon={faTrashAlt} /> <Link className="ms-2" to={`/edit-company/${company._id}`}><FontAwesomeIcon icon={faEdit} /></Link></th>
-                </tr>
-              }) 
-            }
-          
-            
+                <td className="border-bottom cursor-pointer">
+                  <FontAwesomeIcon onClick={() => deleteHandler(company._id)} icon={faTrashAlt} />
+                  <Link className="ms-2" to={`/edit-company/${company._id}`}>
+                    <FontAwesomeIcon icon={faEdit} />
+                  </Link>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </Table>
-    
+
+        {/* Pagination Controls */}
+        <div className="d-flex justify-content-between my-3">
+          <button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
+            Previous
+          </button>
+          <span>Page {currentPage} of {Math.ceil(totalCompanies / entriesPerPage)}</span>
+          <button onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(totalCompanies / entriesPerPage)))} disabled={currentPage === Math.ceil(totalCompanies / entriesPerPage)}>
+            Next
+          </button>
+        </div>
       </Card.Body>
     </Card>
   );
 };
-
 export const VacancyTable = () => {
   const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [entriesPerPage, setEntriesPerPage] = useState(10); // Default entries per page
 
   useEffect(() => {
     dispatch(getAllVacancies());
@@ -808,18 +880,6 @@ export const VacancyTable = () => {
 
   const vacancyListState = useSelector((state) => state?.vacancy?.allVacancies);
   const employees = useSelector((state) => state?.employee?.allEmployees);
-  const totalVacancies = vacancyListState?.length;
-
-  const [updatedVacancy, setUpdatedVacancy] = useState({});
-
-  const handleAllotedToChange = (vacancyId, employeeId) => {
-    setUpdatedVacancy({ ...updatedVacancy, [vacancyId]: employeeId });
-    dispatch(editVacancy({ id: vacancyId, allotedTo: employeeId }));
-  };
-
-  const deleteHandler = (id) => {
-    dispatch(deleteVacancy(id));
-  };
 
   // Filter vacancies based on the search query
   const filteredVacancies = (vacancyListState || []).filter(vacancy =>
@@ -833,6 +893,22 @@ export const VacancyTable = () => {
     return 0;
   });
 
+  // Pagination logic
+  const indexOfLastVacancy = currentPage * entriesPerPage;
+  const indexOfFirstVacancy = indexOfLastVacancy - entriesPerPage;
+  const currentVacancies = sortedVacancies.slice(indexOfFirstVacancy, indexOfLastVacancy);
+
+  // Total pages
+  const totalPages = Math.ceil(sortedVacancies.length / entriesPerPage);
+
+  const handleAllotedToChange = (vacancyId, employeeId) => {
+    dispatch(editVacancy({ id: vacancyId, allotedTo: employeeId }));
+  };
+
+  const deleteHandler = (id) => {
+    dispatch(deleteVacancy(id));
+  };
+
   return (
     <Card border="light" className="table-wrapper table-responsive shadow-sm">
       <Card.Body className="pt-0">
@@ -845,9 +921,25 @@ export const VacancyTable = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </Form.Group>
+
+        {/* Entries per page */}
+        <div className="my-3">
+          <label>Entries per page: </label>
+          <select value={entriesPerPage} onChange={(e) => {
+            setEntriesPerPage(Number(e.target.value));
+            setCurrentPage(1); // Reset to the first page when entries per page change
+          }}>
+            <option value={5}>5</option>
+            <option value={10}>10</option>
+            <option value={20}>20</option>
+            <option value={50}>50</option>
+          </select>
+        </div>
+
         <Table hover className="user-table align-items-center">
           <thead>
             <tr>
+              {/* <th>S. No</th> */}
               <th className="border-bottom">Job Title</th>
               <th className="border-bottom">Company Name</th>
               <th className="border-bottom">Location</th>
@@ -859,10 +951,11 @@ export const VacancyTable = () => {
             </tr>
           </thead>
           <tbody>
-            {sortedVacancies.map((vacancy, idx) => (
-              <tr key={vacancy._id} 
-              style={{ backgroundColor: !vacancy.allotedTo ? 'rgba(255, 0, 0, 0.2)' : 'transparent' }} 
-              >
+            {currentVacancies.map((vacancy,idx) => (
+
+              <tr key={vacancy._id} style={{ backgroundColor: !vacancy.allotedTo ? 'rgba(255, 0, 0, 0.2)' : 'transparent' }}>
+                {/* <td className="border-bottom">{(idx +1)+entriesPerPag}</td> */}
+
                 <td className="border-bottom">
                   <Link to={`/candidate-shortlisted/${vacancy._id}`}>{vacancy.role}</Link>
                 </td>
@@ -873,7 +966,7 @@ export const VacancyTable = () => {
                 <td className="border-bottom">
                   <Form.Control
                     as="select"
-                    value={updatedVacancy[vacancy._id] || vacancy.allotedTo?._id || ''}
+                    value={vacancy.allotedTo?._id || ''}
                     onChange={(e) => handleAllotedToChange(vacancy._id, e.target.value)}
                   >
                     <option value="">Select Employee</option>
@@ -897,6 +990,17 @@ export const VacancyTable = () => {
             ))}
           </tbody>
         </Table>
+
+        {/* Pagination Controls */}
+        <div className="d-flex justify-content-between my-3">
+          <button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
+            Previous
+          </button>
+          <span>Page {currentPage} of {totalPages}</span>
+          <button onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}>
+            Next
+          </button>
+        </div>
       </Card.Body>
     </Card>
   );
@@ -906,6 +1010,8 @@ export const VacancyTable = () => {
 export const AdminTable = ({vacancyListState}) => {
   const dispatch = useDispatch()
   const [updatedVacancy, setUpdatedVacancy] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [entriesPerPage, setEntriesPerPage] = useState(10)
   const employees = useSelector((state) => state?.employee?.allEmployees);
 
 
@@ -913,9 +1019,27 @@ export const AdminTable = ({vacancyListState}) => {
     setUpdatedVacancy({ ...updatedVacancy, [vacancyId]: employeeId });
     dispatch(editVacancy({ id: vacancyId, allotedTo: employeeId }));
   };
+
+  const indexOfLastVacancy = currentPage * entriesPerPage;
+  const indexOfFirstVacancy = indexOfLastVacancy - entriesPerPage;
+  const currentVacancies = vacancyListState?.slice(indexOfFirstVacancy, indexOfLastVacancy);
+  
+  const totalVacancies = vacancyListState?.length;
   return (
     <Card border="light" className="table-wrapper table-responsive shadow-sm">
       <Card.Body className="pt-0">
+      <div className="my-3">
+          <label>Entries per page: </label>
+          <select value={entriesPerPage} onChange={(e) => {
+            setEntriesPerPage(Number(e.target.value));
+            setCurrentPage(1); // Reset to the first page when entries per page change
+          }}>
+            <option value={5}>5</option>
+            <option value={10}>10</option>
+            <option value={20}>20</option>
+            <option value={50}>50</option>
+          </select>
+        </div>
         <Table hover className="user-table align-items-center">
           <thead>
             <tr>
@@ -932,7 +1056,7 @@ export const AdminTable = ({vacancyListState}) => {
             </tr>
           </thead>
           <tbody>
-            {vacancyListState?.map((vacancy, idx) => (
+            {currentVacancies?.map((vacancy, idx) => (
               <tr key={vacancy._id}>
                 <td className="border-bottom">{idx + 1}</td>
                 <td className="border-bottom"><Link to={`/candidate-shortlisted/${vacancy._id}`}>{vacancy.role}</Link></td>
@@ -962,6 +1086,16 @@ export const AdminTable = ({vacancyListState}) => {
           </tbody>
         </Table>
     
+        <div className="d-flex justify-content-between my-3">
+          <button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
+            Previous
+          </button>
+          <span>Page {currentPage} of {Math.ceil(totalVacancies / entriesPerPage)}</span>
+          <button onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(totalVacancies / entriesPerPage)))} disabled={currentPage === Math.ceil(totalVacancies / entriesPerPage)}>
+            Next
+          </button>
+        </div>
+
       </Card.Body>
     </Card>
   );
@@ -975,6 +1109,10 @@ export const AllCompletedVacancyTable = ({ todayVac }) => {
   const [locationSearch, setLocationSearch] = useState("");
   const [companySearch, setCompanySearch] = useState("");
   const [jobTitleSearch, setJobTitleSearch] = useState(""); // New state for job title search
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [entriesPerPage, setEntriesPerPage] = useState(10); // Default entries per page
 
   useEffect(() => {
     dispatch(getAllVacancies());
@@ -1023,7 +1161,7 @@ export const AllCompletedVacancyTable = ({ todayVac }) => {
     ?.filter((vacancy) => 
       vacancy.companyName.toLowerCase().includes(companySearch.toLowerCase()) &&
       vacancy.jobLocation.toLowerCase().includes(locationSearch.toLowerCase()) &&
-      vacancy.role.toLowerCase().includes(jobTitleSearch.toLowerCase()) // New filter for job title
+      vacancy.role.toLowerCase().includes(jobTitleSearch.toLowerCase())
     )
     ?.filter((vacancy) => vacancy.status === 'completed')
     ?.sort((a, b) => {
@@ -1031,6 +1169,14 @@ export const AllCompletedVacancyTable = ({ todayVac }) => {
       const mailB = updatedVacancy[b._id]?.mail || b.mail;
       return mailA === 'pending' && mailB !== 'pending' ? -1 : 1;
     });
+
+  // Pagination logic
+  const indexOfLastVacancy = currentPage * entriesPerPage;
+  const indexOfFirstVacancy = indexOfLastVacancy - entriesPerPage;
+  const currentVacancies = filteredVacancyList?.slice(indexOfFirstVacancy, indexOfLastVacancy);
+
+  // Total pages
+  const totalPages = Math.ceil(filteredVacancyList?.length / entriesPerPage);
 
   return (
     <Card border="light" className="table-wrapper table-responsive shadow-sm">
@@ -1060,6 +1206,17 @@ export const AllCompletedVacancyTable = ({ todayVac }) => {
           />
         </div>
 
+        {/* Entries per page */}
+        <div className="my-3">
+          <label>Entries per page: </label>
+          <select value={entriesPerPage} onChange={(e) => setEntriesPerPage(Number(e.target.value))}>
+            <option value={5}>5</option>
+            <option value={10}>10</option>
+            <option value={20}>20</option>
+            <option value={50}>50</option>
+          </select>
+        </div>
+
         <Table hover className="user-table align-items-center">
           <thead>
             <tr>
@@ -1077,9 +1234,9 @@ export const AllCompletedVacancyTable = ({ todayVac }) => {
             </tr>
           </thead>
           <tbody>
-            {filteredVacancyList?.map((vacancy, idx) => (
+            {currentVacancies?.map((vacancy, idx) => (
               <tr key={vacancy._id} style={{ backgroundColor: vacancy.mail === 'pending' ? 'rgba(220, 53, 69, 0.3)' : '' }}>
-                <td className="border-bottom">{idx + 1}</td>
+                <td className="border-bottom">{indexOfFirstVacancy + idx + 1}</td>
                 <td className="border-bottom">
                   <Link to={`/candidate-shortlisted/${vacancy._id}`}>{vacancy.role}</Link>
                 </td>
@@ -1120,6 +1277,17 @@ export const AllCompletedVacancyTable = ({ todayVac }) => {
             ))}
           </tbody>
         </Table>
+
+        {/* Pagination Controls */}
+        <div className="d-flex justify-content-between my-3">
+          <button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
+            Previous
+          </button>
+          <span>Page {currentPage} of {totalPages}</span>
+          <button onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}>
+            Next
+          </button>
+        </div>
       </Card.Body>
     </Card>
   );
@@ -1232,21 +1400,43 @@ export const JobAppliedBy = ({id}) => {
 };
 
 
-export const AllotedVacansiesByEmployee = ({ vacancyListState,pending }) => {
+export const AllotedVacansiesByEmployee = ({ vacancyListState, pending }) => {
   const dispatch = useDispatch();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [entriesPerPage, setEntriesPerPage] = useState(10); // Default entries per page
 
   // Handler to update the status of a specific vacancy
   const statusChangeHandler = (id, status) => {
     dispatch(editVacancy({ id, status }));
   };
 
+  // Pagination logic
+  const indexOfLastVacancy = currentPage * entriesPerPage;
+  const indexOfFirstVacancy = indexOfLastVacancy - entriesPerPage;
+  const currentVacancies = vacancyListState?.slice(indexOfFirstVacancy, indexOfLastVacancy);
+  
+  const totalVacancies = vacancyListState?.length;
+
   return (
     <Card border="light" className="table-wrapper table-responsive shadow-sm">
       <Card.Body className="pt-0">
+        {/* Entries per page */}
+        <div className="my-3">
+          <label>Entries per page: </label>
+          <select value={entriesPerPage} onChange={(e) => {
+            setEntriesPerPage(Number(e.target.value));
+            setCurrentPage(1); // Reset to the first page when entries per page change
+          }}>
+            <option value={5}>5</option>
+            <option value={10}>10</option>
+            <option value={20}>20</option>
+            <option value={50}>50</option>
+          </select>
+        </div>
+
         <Table hover className="user-table align-items-center">
           <thead>
             <tr>
-              {/* <th className="border-bottom">S.NO</th> */}
               <th className="border-bottom">Job Title</th>
               <th className="border-bottom">Company Name</th>
               <th className="border-bottom">Location</th>
@@ -1258,11 +1448,9 @@ export const AllotedVacansiesByEmployee = ({ vacancyListState,pending }) => {
             </tr>
           </thead>
           <tbody>
-            {vacancyListState?.map((vacancy, idx) => (
+            {currentVacancies?.map((vacancy) => (
               !pending ? (
-                <tr key={vacancy._id} >
-
-                  {/* <td className="border-bottom"></td> */}
+                <tr key={vacancy._id}>
                   <td className="border-bottom">
                     <Link to={`/candidate-shortlisted/${vacancy._id}`}>{vacancy.role}</Link>
                   </td>
@@ -1283,16 +1471,14 @@ export const AllotedVacansiesByEmployee = ({ vacancyListState,pending }) => {
                     </select>
                   </td>
                 </tr>
-              ) : (vacancy.status === 'Pending' && new Date(vacancy.deadline).toLocaleDateString() >= new Date().toLocaleDateString() ) ? (
+              ) : (vacancy.status === 'Pending' && new Date(vacancy.deadline).toLocaleDateString() >= new Date().toLocaleDateString()) ? (
                 <tr
-                key={vacancy._id}
-                style={{
-                  backgroundColor: new Date(vacancy.deadline).toLocaleDateString() === new Date().toLocaleDateString() ? 'rgba(220, 53, 69, 0.3)' : 'transparent'
-                }}
-                className="border-bottom"
-              >
-              
-                  {/* <td className="border-bottom">{idx + 1}</td> */}
+                  key={vacancy._id}
+                  style={{
+                    backgroundColor: new Date(vacancy.deadline).toLocaleDateString() === new Date().toLocaleDateString() ? 'rgba(220, 53, 69, 0.3)' : 'transparent'
+                  }}
+                  className="border-bottom"
+                >
                   <td className="border-bottom">
                     <Link to={`/candidate-shortlisted/${vacancy._id}`}>{vacancy.role}</Link>
                   </td>
@@ -1300,7 +1486,6 @@ export const AllotedVacansiesByEmployee = ({ vacancyListState,pending }) => {
                   <td className="border-bottom">{vacancy.jobLocation}</td>
                   <td className="border-bottom">{vacancy.salary}</td>
                   <td className="border-bottom">{vacancy.deadline}</td>
-
                   <td className="border-bottom">{vacancy.gender}</td>
                   <td className="border-bottom">{vacancy.jobFunction}</td>
                   <td className="border-bottom">
@@ -1318,6 +1503,17 @@ export const AllotedVacansiesByEmployee = ({ vacancyListState,pending }) => {
             ))}
           </tbody>
         </Table>
+
+        {/* Pagination Controls */}
+        <div className="d-flex justify-content-between my-3">
+          <button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
+            Previous
+          </button>
+          <span>Page {currentPage} of {Math.ceil(totalVacancies / entriesPerPage)}</span>
+          <button onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(totalVacancies / entriesPerPage)))} disabled={currentPage === Math.ceil(totalVacancies / entriesPerPage)}>
+            Next
+          </button>
+        </div>
       </Card.Body>
     </Card>
   );
@@ -1326,8 +1522,9 @@ export const AllotedVacansiesByEmployee = ({ vacancyListState,pending }) => {
 export const IncompleteVacanciesTable = ({ vacancyListState }) => {
   const dispatch = useDispatch();
   
-  // State to keep track of the reason for each vacancy
   const [reasons, setReasons] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [entriesPerPage, setEntriesPerPage] = useState(10); // Default entries per page
 
   // Handler to update the status of a specific vacancy
   const statusChangeHandler = (id, status) => {
@@ -1338,25 +1535,46 @@ export const IncompleteVacanciesTable = ({ vacancyListState }) => {
   const handleReasonChange = (id, reason) => {
     setReasons((prev) => ({
       ...prev,
-      [id]: reason, // Update reason for the specific vacancy
+      [id]: reason,
     }));
   };
 
   // Handler to dispatch the reason update on Enter key press
   const handleReasonSubmit = (e, id) => {
     if (e.key === 'Enter') {
-      e.preventDefault(); // Prevent new line in textarea
+      e.preventDefault();
       const reason = reasons[id];
       if (reason) {
-        dispatch(editVacancy({ id, reason })); // Dispatch the update for the reason
+        dispatch(editVacancy({ id, reason }));
         alert("Reason updated successfully!"); // Optional alert, can be removed
       }
     }
   };
 
+  // Pagination logic
+  const indexOfLastVacancy = currentPage * entriesPerPage;
+  const indexOfFirstVacancy = indexOfLastVacancy - entriesPerPage;
+  const currentVacancies = vacancyListState?.slice(indexOfFirstVacancy, indexOfLastVacancy);
+  
+  const totalVacancies = vacancyListState?.length;
+
   return (
     <Card border="light" className="table-wrapper table-responsive shadow-sm">
       <Card.Body className="pt-0">
+        {/* Entries per page */}
+        <div className="my-3">
+          <label>Entries per page: </label>
+          <select value={entriesPerPage} onChange={(e) => {
+            setEntriesPerPage(Number(e.target.value));
+            setCurrentPage(1); // Reset to the first page when entries per page change
+          }}>
+            <option value={5}>5</option>
+            <option value={10}>10</option>
+            <option value={20}>20</option>
+            <option value={50}>50</option>
+          </select>
+        </div>
+
         <Table hover className="user-table align-items-center">
           <thead>
             <tr>
@@ -1368,11 +1586,11 @@ export const IncompleteVacanciesTable = ({ vacancyListState }) => {
               <th className="border-bottom">Gender</th>
               <th className="border-bottom">Job Function</th>
               <th className="border-bottom px-6">Status</th>
-              <th className="border-bottom px-8">Reason</th> {/* New Reason Field */}
+              <th className="border-bottom px-8">Reason</th>
             </tr>
           </thead>
           <tbody>
-            {vacancyListState?.map((vacancy) => (
+            {currentVacancies?.map((vacancy) => (
               <tr
                 key={vacancy._id}
                 style={{
@@ -1393,7 +1611,7 @@ export const IncompleteVacanciesTable = ({ vacancyListState }) => {
                 <td className="border-bottom">{vacancy.jobFunction}</td>
                 <td className="border-bottom">
                   <select
-                    value={vacancy.status} // Ensure this reflects the current status
+                    value={vacancy.status}
                     onChange={(e) => statusChangeHandler(vacancy._id, e.target.value)}
                     className="form-select"
                   >
@@ -1403,9 +1621,9 @@ export const IncompleteVacanciesTable = ({ vacancyListState }) => {
                 </td>
                 <td className="border-bottom">
                   <textarea
-                    value={reasons[vacancy._id] || vacancy.reason || ''} // Populate textarea with existing reason or reason from state
-                    onChange={(e) => handleReasonChange(vacancy._id, e.target.value)} // Update local reason state
-                    onKeyDown={(e) => handleReasonSubmit(e, vacancy._id)} // Dispatch when Enter is pressed
+                    value={reasons[vacancy._id] || vacancy.reason || ''}
+                    onChange={(e) => handleReasonChange(vacancy._id, e.target.value)}
+                    onKeyDown={(e) => handleReasonSubmit(e, vacancy._id)}
                     placeholder="Enter reason"
                     rows={2}
                     className="form-control"
@@ -1415,6 +1633,17 @@ export const IncompleteVacanciesTable = ({ vacancyListState }) => {
             ))}
           </tbody>
         </Table>
+
+        {/* Pagination Controls */}
+        <div className="d-flex justify-content-between my-3">
+          <button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
+            Previous
+          </button>
+          <span>Page {currentPage} of {Math.ceil(totalVacancies / entriesPerPage)}</span>
+          <button onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(totalVacancies / entriesPerPage)))} disabled={currentPage === Math.ceil(totalVacancies / entriesPerPage)}>
+            Next
+          </button>
+        </div>
       </Card.Body>
     </Card>
   );
@@ -1423,14 +1652,39 @@ export const IncompleteVacanciesTable = ({ vacancyListState }) => {
 export const AllotedCompletedVacansiesByEmployee = ({ vacancyListState }) => {
   const dispatch = useDispatch();
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [entriesPerPage, setEntriesPerPage] = useState(10); // Default entries per page
+
   // Handler to update the status of a specific vacancy
   const statusChangeHandler = (id, status) => {
     dispatch(editVacancy({ id, status }));
   };
 
+  // Pagination logic
+  const completedVacancies = vacancyListState?.filter(vacancy => vacancy.status === 'completed');
+  const indexOfLastVacancy = currentPage * entriesPerPage;
+  const indexOfFirstVacancy = indexOfLastVacancy - entriesPerPage;
+  const currentVacancies = completedVacancies?.slice(indexOfFirstVacancy, indexOfLastVacancy);
+
+  const totalVacancies = completedVacancies?.length;
+
   return (
     <Card border="light" className="table-wrapper table-responsive shadow-sm">
       <Card.Body className="pt-0">
+        {/* Entries per page */}
+        <div className="my-3">
+          <label>Entries per page: </label>
+          <select value={entriesPerPage} onChange={(e) => {
+            setEntriesPerPage(Number(e.target.value));
+            setCurrentPage(1); // Reset to the first page when entries per page change
+          }}>
+            <option value={5}>5</option>
+            <option value={10}>10</option>
+            <option value={20}>20</option>
+            <option value={50}>50</option>
+          </select>
+        </div>
+
         <Table hover className="user-table align-items-center">
           <thead>
             <tr>
@@ -1443,39 +1697,48 @@ export const AllotedCompletedVacansiesByEmployee = ({ vacancyListState }) => {
               <th className="border-bottom">Gender</th>
               <th className="border-bottom">Job Function</th>
               <th className="border-bottom px-6">Status</th>
-              <th className="border-bottom">Interview Sheduled</th>
+              <th className="border-bottom">Interview Scheduled</th>
             </tr>
           </thead>
           <tbody>
-            {vacancyListState?.map((vacancy, idx) => (
-               (vacancy.status === 'completed') ? (
-                <tr key={vacancy._id}>
-                  <td className="border-bottom">{idx + 1}</td>
-                  <td className="border-bottom">
-                    <Link to={`/candidate-shortlisted/${vacancy._id}`}>{vacancy.role}</Link>
-                  </td>
-                  <td className="border-bottom">{vacancy.companyName}</td>
-                  <td className="border-bottom">{vacancy.jobLocation}</td>
-                  <td className="border-bottom">{vacancy.salary}</td>
-                  <td className="border-bottom">{vacancy.deadline}</td>
-                  <td className="border-bottom">{vacancy.gender}</td>
-                  <td className="border-bottom">{vacancy.jobFunction}</td>
-                  <td className="border-bottom">
-                    <select
-                      value={vacancy.status} // Ensure this reflects the current status
-                      onChange={(e) => statusChangeHandler(vacancy._id, e.target.value)}
-                      className="form-select"
-                    >
-                      <option value="completed">Completed</option>
-                      <option value="Pending">Pending</option>
-                    </select>
-                  </td>
-                  <td className="border-bottom">{vacancy.interviewSheduled ? new Date(vacancy.interviewSheduled).toLocaleDateString('en-GB') : 'NA'}</td>
-                </tr>
-              ) : null
+            {currentVacancies?.map((vacancy, idx) => (
+              <tr key={vacancy._id}>
+                <td className="border-bottom">{indexOfFirstVacancy + idx + 1}</td>
+                <td className="border-bottom">
+                  <Link to={`/candidate-shortlisted/${vacancy._id}`}>{vacancy.role}</Link>
+                </td>
+                <td className="border-bottom">{vacancy.companyName}</td>
+                <td className="border-bottom">{vacancy.jobLocation}</td>
+                <td className="border-bottom">{vacancy.salary}</td>
+                <td className="border-bottom">{vacancy.deadline}</td>
+                <td className="border-bottom">{vacancy.gender}</td>
+                <td className="border-bottom">{vacancy.jobFunction}</td>
+                <td className="border-bottom">
+                  <select
+                    value={vacancy.status}
+                    onChange={(e) => statusChangeHandler(vacancy._id, e.target.value)}
+                    className="form-select"
+                  >
+                    <option value="completed">Completed</option>
+                    <option value="Pending">Pending</option>
+                  </select>
+                </td>
+                <td className="border-bottom">{vacancy.interviewSheduled ? new Date(vacancy.interviewSheduled).toLocaleDateString('en-GB') : 'NA'}</td>
+              </tr>
             ))}
           </tbody>
         </Table>
+
+        {/* Pagination Controls */}
+        <div className="d-flex justify-content-between my-3">
+          <button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
+            Previous
+          </button>
+          <span>Page {currentPage} of {Math.ceil(totalVacancies / entriesPerPage)}</span>
+          <button onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(totalVacancies / entriesPerPage)))} disabled={currentPage === Math.ceil(totalVacancies / entriesPerPage)}>
+            Next
+          </button>
+        </div>
       </Card.Body>
     </Card>
   );
@@ -1537,18 +1800,42 @@ export const TodaysInterview = ({ vacancyListState }) => {
 
 export const MailSentVacanciesByEmployee = ({ vacancyListState }) => {
   const dispatch = useDispatch();
-  const [vacStatus,setVacStatus] = useState("")
+  const [vacStatus, setVacStatus] = useState("");
+  
+  const [currentPage, setCurrentPage] = useState(1);
+  const [entriesPerPage, setEntriesPerPage] = useState(10); // Default entries per page
 
-  const totalVacancies = vacancyListState?.length;
+  // Filter vacancies to only include those with mail status 'sent'
+  const filteredVacancies = vacancyListState?.filter(vacancy => vacancy.mail === 'sent');
+  const totalVacancies = filteredVacancies?.length;
+
+  // Pagination logic
+  const indexOfLastVacancy = currentPage * entriesPerPage;
+  const indexOfFirstVacancy = indexOfLastVacancy - entriesPerPage;
+  const currentVacancies = filteredVacancies?.slice(indexOfFirstVacancy, indexOfLastVacancy);
 
   const statusChangeHandler = (id, status) => {
-    dispatch(editVacancy({id, status})); 
-    setVacStatus(status)
+    dispatch(editVacancy({ id, status }));
+    setVacStatus(status);
   };
 
   return (
     <Card border="light" className="table-wrapper table-responsive shadow-sm">
       <Card.Body className="pt-0">
+        {/* Entries per page */}
+        <div className="my-3">
+          <label>Entries per page: </label>
+          <select value={entriesPerPage} onChange={(e) => {
+            setEntriesPerPage(Number(e.target.value));
+            setCurrentPage(1); // Reset to the first page when entries per page change
+          }}>
+            <option value={5}>5</option>
+            <option value={10}>10</option>
+            <option value={20}>20</option>
+            <option value={50}>50</option>
+          </select>
+        </div>
+
         <Table hover className="user-table align-items-center">
           <thead>
             <tr>
@@ -1558,39 +1845,50 @@ export const MailSentVacanciesByEmployee = ({ vacancyListState }) => {
               <th className="border-bottom">Location</th>
               <th className="border-bottom">Salary</th>
               <th className="border-bottom">Dead Line</th>
-              <th className="border-bottom">Status</th>
-              <th className="border-bottom">Interview sheduled</th>
+              <th className="border-bottom px-6">Status</th>
+              <th className="border-bottom">Interview Scheduled</th>
             </tr>
           </thead>
           <tbody>
-            {vacancyListState?.map((vacancy, idx) => (
-               vacancy.mail == 'sent' ?<tr key={vacancy._id}>
-              <td className="border-bottom">{idx + 1}</td>
-              <td className="border-bottom"><Link to={`/candidate-shortlisted/${vacancy._id}`}>{vacancy.role}</Link></td>
-              <td className="border-bottom">{vacancy.companyName}</td>
-              <td className="border-bottom">{vacancy.jobLocation}</td>
-              <td className="border-bottom">{vacancy.salary}</td>
-              <td className="border-bottom">{vacancy.deadline}</td>
-              <td className="border-bottom">
-                <select
-                  value={vacStatus == "" ?vacancy.status : vacStatus}
-                  onChange={(e) => statusChangeHandler(vacancy._id, e.target.value)}
-                  className="form-select"
-                >
-                  <option value="completed">Completed</option>
-                  <option value="Pending">Pending</option>
-                </select>
-              </td>
-              <td className="border-bottom">{vacancy.interviewSheduled ? vacancy.interviewSheduled : "NA"}</td>
-            </tr>  :null
+            {currentVacancies?.map((vacancy, idx) => (
+              <tr key={vacancy._id}>
+                <td className="border-bottom">{indexOfFirstVacancy + idx + 1}</td>
+                <td className="border-bottom"><Link to={`/candidate-shortlisted/${vacancy._id}`}>{vacancy.role}</Link></td>
+                <td className="border-bottom">{vacancy.companyName}</td>
+                <td className="border-bottom">{vacancy.jobLocation}</td>
+                <td className="border-bottom">{vacancy.salary}</td>
+                <td className="border-bottom">{new Date(vacancy.deadline).toLocaleDateString()}</td>
+                <td className="border-bottom">
+                  <select
+                    value={vacStatus === "" ? vacancy.status : vacStatus}
+                    onChange={(e) => statusChangeHandler(vacancy._id, e.target.value)}
+                    className="form-select"
+                  >
+                    <option value="completed">Completed</option>
+                    <option value="Pending">Pending</option>
+                  </select>
+                </td>
+                <td className="border-bottom">{vacancy.interviewSheduled ? new Date(vacancy.interviewSheduled).toLocaleDateString() : "NA"}</td>
+              </tr>
             ))}
           </tbody>
         </Table>
-      
+
+        {/* Pagination Controls */}
+        <div className="d-flex justify-content-between my-3">
+          <button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
+            Previous
+          </button>
+          <span>Page {currentPage} of {Math.ceil(totalVacancies / entriesPerPage)}</span>
+          <button onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(totalVacancies / entriesPerPage)))} disabled={currentPage === Math.ceil(totalVacancies / entriesPerPage)}>
+            Next
+          </button>
+        </div>
       </Card.Body>
     </Card>
   );
 };
+
 
 export const EnquiryTable = () => {
   const enquiries = useSelector(state => state.contact?.getAll)

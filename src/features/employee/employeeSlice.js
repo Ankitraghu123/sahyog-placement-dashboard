@@ -38,6 +38,7 @@ export const getAllEmployees = createAsyncThunk('employee/get-all',async(thunkAp
 })
 
 export const getSingleEmploye = createAsyncThunk('employee/get-single-employee',async(id,thunkApi)=>{
+    console.log(id)
     try{
         return await employeeService.getSingleEmploye(id)
     }catch(err){

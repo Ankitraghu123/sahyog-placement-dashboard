@@ -59,3 +59,9 @@ transition: cubic-bezier(0.165, 0.84, 0.44, 1);
     border: 2px solid rgb(59, 156, 205);
     background-color: transparent;
 }
+
+#box{
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+}

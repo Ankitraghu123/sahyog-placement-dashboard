@@ -83,9 +83,11 @@ export const CounterWidget = (props) => {
             </div>
           </Col>
           <Col xs={12} xl={8} className="px-xl-0">
-            <div className="d-none d-sm-block">
+            <div className="d-none d-sm-block" >
+              <div id="box">
               <h5>{category}</h5>
               <h3 className="mb-1">{title}</h3>
+              </div>
             </div>
             {/* <small>{period}, <FontAwesomeIcon icon={faGlobeEurope} size="xs" /> WorldWide</small> */}
             {/* <div className="small mt-2">

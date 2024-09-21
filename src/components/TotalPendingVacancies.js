@@ -11,7 +11,9 @@ export default () => {
     const dispatch = useDispatch()
     const {id} = useParams()
     useEffect(()=>{
+     if(id){
       dispatch(getSingleEmploye(id))
+     }
   },[dispatch,id])
    
     const allEmployees = useSelector(state => state?.employee?.allEmployees)

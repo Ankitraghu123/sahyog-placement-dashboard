@@ -13,7 +13,9 @@ export default () => {
 
 
     useEffect(()=>{
-      dispatch(getSingleEmploye(id))
+      if(id){
+        dispatch(getSingleEmploye(id))
+      }
     },[dispatch])
 
     const allEmployees = useSelector(state => state?.employee?.allEmployees)

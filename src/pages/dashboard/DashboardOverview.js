@@ -21,9 +21,10 @@ export default () => {
 
   useEffect(() => {
     if (currentEmployee?._id) {
-      dispatch(getSingleEmploye(currentEmployee._id));
+      console.log("Current Employee ID:", currentEmployee._id);
+      dispatch(getSingleEmploye(currentEmployee?._id));
     }
-  }, [dispatch, currentEmployee]);
+  }, [currentEmployee,dispatch]);
 
   useEffect(() => {
     if (employee?.allotedVacancies) {
@@ -73,7 +74,7 @@ export default () => {
         <Col xs={12} sm={6} xl={3} className="mb-4">
           <CounterWidget
             category="Pending Vacancies"
-            title={pendingVac}
+            title={pendingVac - inCompleteVac }
             icon={faCashRegister}
             to={`/pending-vacancies/${employee?._id}`}
           />

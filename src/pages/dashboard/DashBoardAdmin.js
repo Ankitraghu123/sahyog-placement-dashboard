@@ -89,7 +89,7 @@ export default () => {
       <Row className="justify-content-md-center">
         <Col xs={12} sm={6} xl={3} className="mb-4">
           <CounterWidget
-            category="Total Alloted Vacancies"
+            category="Total Alloted"
             title={vacancyCounts.alloted}
             // icon={faChartLine}
             to='/admin/alloted-vacancies'
@@ -97,7 +97,7 @@ export default () => {
         </Col>
         <Col xs={12} sm={6} xl={3} className="mb-4">
           <CounterWidget
-            category="Not Alloted Vacancies" // New widget for not allotted vacancies
+            category="Not Alloted" // New widget for not allotted vacancies
             title={vacancyCounts.notAlloted}
             // icon={fa}
             to='/admin/not-alloted-vacancies'
@@ -106,7 +106,7 @@ export default () => {
 
         <Col xs={12} sm={6} xl={3} className="mb-4">
           <CounterWidget
-            category="Total Pending Vacancies"
+            category="Total Pending"
             title={vacancyCounts.pending}
             // icon={faCashRegister}
             to='/admin/pending-vacancies'
@@ -114,7 +114,7 @@ export default () => {
         </Col>
         <Col xs={12} sm={6} xl={3} className="mb-4">
           <CounterWidget
-            category="Total Completed Vacancies"
+            category="Total Completed"
             title={vacancyCounts.completed}
             // icon={faCashRegister}
             to='/admin/completed-vacancies'
@@ -122,7 +122,7 @@ export default () => {
         </Col>
         <Col xs={12} sm={6} xl={3} className="mb-4">
           <CounterWidget
-            category="Emailed vacancies"
+            category="Emailed"
             title={vacancyCounts.emailed}
             // icon={faCashRegister}
             to='/admin/emailSent-vacancies'
@@ -130,7 +130,7 @@ export default () => {
         </Col>
         <Col xs={12} sm={6} xl={3} className="mb-4">
           <CounterWidget
-            category="Todays Total Interiew"
+            category="Todays Interiew"
             title={interview}
             // icon={faCashRegister}
             to='/admin/todays-interview'
@@ -138,7 +138,7 @@ export default () => {
         </Col>
         <Col xs={12} sm={6} xl={3} className="mb-4">
           <CounterWidget
-            category="Todays Alloted vacancies"
+            category="Todays Alloted"
             title={vacancyCounts.todayAlloted}
             // icon={faCashRegister}
             to='/admin/today-alloted-vac'
@@ -146,7 +146,7 @@ export default () => {
         </Col>
         <Col xs={12} sm={6} xl={3} className="mb-4">
           <CounterWidget
-            category="Todays Completed vacancies"
+            category="Todays Completed"
             title={vacancyCounts.todayCompleted}
             // icon={faCashRegister}
             to='/admin/today-completed-vacancies'

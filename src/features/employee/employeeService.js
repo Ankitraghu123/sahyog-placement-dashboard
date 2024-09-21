@@ -36,6 +36,7 @@ const getAllEmployees = async()=>{
 }
 
 const getSingleEmploye = async(id)=>{
+    console.log(id)
     const response = await axios.get(`${base_url}employee/getSingleEmploye/${id}`,config)
     return response.data
 }
