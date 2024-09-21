@@ -62,6 +62,7 @@ import TodaysAllotedVacancy from '../components/Admin/TodaysAllotedVacancy'
 import TodaysCompletedVac from '../components/Admin/TodaysCompletedVac'
 import TodaysCompletedEmpVac from '../components/TodayCompletedEmpVac'
 import IncompleteAllotedVac from '../components/IncompleteAllotedVac';
+import TotalIncompletedVac from '../components/Admin/TotalIncompletedVac';
 
 
 const RouteWithLoader = ({ component: Component, ...rest }) => {
@@ -135,6 +136,7 @@ export default () => (
     <RouteWithSidebar exact path={Routes.DashboardAdmin.path} component={DashBoardAdmin} condition={isLoggedIn()} />
     <RouteWithSidebar exact path={Routes.TodayAllotedVac.path} component={TodaysAllotedVacancy} condition={isLoggedIn()} />
     <RouteWithSidebar exact path={Routes.TodayCompletedVac.path} component={TodaysCompletedVac} condition={isLoggedIn()} />
+    <RouteWithSidebar exact path={Routes.TotalIncompletedVac.path} component={TotalIncompletedVac} condition={isLoggedIn()} />
     <RouteWithSidebar exact path={Routes.AllotedVacancies.path} component={AllotedVacancies} condition={isLoggedIn()} />
     <RouteWithSidebar exact path={Routes.NotAllotedVacancies.path} component={NotAllotedVacancies} condition={isLoggedIn()} />
     <RouteWithSidebar exact path={Routes.TodaysTotalInterview.path} component={TodayTotalInterviews} condition={isLoggedIn()} />

@@ -1410,12 +1410,25 @@ export const AllotedVacansiesByEmployee = ({ vacancyListState, pending }) => {
     dispatch(editVacancy({ id, status }));
   };
 
+  // Filter the vacancies based on pending status if `pending` is true
+  const filteredVacancies = pending
+    ? vacancyListState?.filter(
+        (vacancy) =>
+          vacancy.status === "Pending" &&
+          new Date(vacancy.deadline).toLocaleDateString() >=
+            new Date().toLocaleDateString()
+      )
+    : vacancyListState;
+
   // Pagination logic
   const indexOfLastVacancy = currentPage * entriesPerPage;
   const indexOfFirstVacancy = indexOfLastVacancy - entriesPerPage;
-  const currentVacancies = vacancyListState?.slice(indexOfFirstVacancy, indexOfLastVacancy);
-  
-  const totalVacancies = vacancyListState?.length;
+  const currentVacancies = filteredVacancies?.slice(
+    indexOfFirstVacancy,
+    indexOfLastVacancy
+  );
+
+  const totalVacancies = filteredVacancies?.length;
 
   return (
     <Card border="light" className="table-wrapper table-responsive shadow-sm">
@@ -1423,10 +1436,13 @@ export const AllotedVacansiesByEmployee = ({ vacancyListState, pending }) => {
         {/* Entries per page */}
         <div className="my-3">
           <label>Entries per page: </label>
-          <select value={entriesPerPage} onChange={(e) => {
-            setEntriesPerPage(Number(e.target.value));
-            setCurrentPage(1); // Reset to the first page when entries per page change
-          }}>
+          <select
+            value={entriesPerPage}
+            onChange={(e) => {
+              setEntriesPerPage(Number(e.target.value));
+              setCurrentPage(1); // Reset to the first page when entries per page change
+            }}
+          >
             <option value={5}>5</option>
             <option value={10}>10</option>
             <option value={20}>20</option>
@@ -1449,68 +1465,64 @@ export const AllotedVacansiesByEmployee = ({ vacancyListState, pending }) => {
           </thead>
           <tbody>
             {currentVacancies?.map((vacancy) => (
-              !pending ? (
-                <tr key={vacancy._id}>
-                  <td className="border-bottom">
-                    <Link to={`/candidate-shortlisted/${vacancy._id}`}>{vacancy.role}</Link>
-                  </td>
-                  <td className="border-bottom">{vacancy.companyName}</td>
-                  <td className="border-bottom">{vacancy.jobLocation}</td>
-                  <td className="border-bottom">{vacancy.salary}</td>
-                  <td className="border-bottom">{vacancy.deadline}</td>
-                  <td className="border-bottom">{vacancy.gender}</td>
-                  <td className="border-bottom">{vacancy.jobFunction}</td>
-                  <td className="border-bottom">
-                    <select
-                      value={vacancy.status} // Ensure this reflects the current status
-                      onChange={(e) => statusChangeHandler(vacancy._id, e.target.value)}
-                      className="form-select"
-                    >
-                      <option value="completed">Completed</option>
-                      <option value="Pending">Pending</option>
-                    </select>
-                  </td>
-                </tr>
-              ) : (vacancy.status === 'Pending' && new Date(vacancy.deadline).toLocaleDateString() >= new Date().toLocaleDateString()) ? (
-                <tr
-                  key={vacancy._id}
-                  style={{
-                    backgroundColor: new Date(vacancy.deadline).toLocaleDateString() === new Date().toLocaleDateString() ? 'rgba(220, 53, 69, 0.3)' : 'transparent'
-                  }}
-                  className="border-bottom"
-                >
-                  <td className="border-bottom">
-                    <Link to={`/candidate-shortlisted/${vacancy._id}`}>{vacancy.role}</Link>
-                  </td>
-                  <td className="border-bottom">{vacancy.companyName}</td>
-                  <td className="border-bottom">{vacancy.jobLocation}</td>
-                  <td className="border-bottom">{vacancy.salary}</td>
-                  <td className="border-bottom">{vacancy.deadline}</td>
-                  <td className="border-bottom">{vacancy.gender}</td>
-                  <td className="border-bottom">{vacancy.jobFunction}</td>
-                  <td className="border-bottom">
-                    <select
-                      value={vacancy.status} // Ensure this reflects the current status
-                      onChange={(e) => statusChangeHandler(vacancy._id, e.target.value)}
-                      className="form-select"
-                    >
-                      <option value="completed">Completed</option>
-                      <option value="Pending">Pending</option>
-                    </select>
-                  </td>
-                </tr>
-              ) : null
+              <tr
+                key={vacancy._id}
+                style={{
+                  backgroundColor:pending?
+                    new Date(vacancy.deadline).toLocaleDateString() ===
+                    new Date().toLocaleDateString()
+                      ? "rgba(220, 53, 69, 0.3)"
+                      : "transparent" : null
+                }}
+                className="border-bottom"
+              >
+                <td className="border-bottom">
+                  <Link to={`/candidate-shortlisted/${vacancy._id}`}>
+                    {vacancy.role}
+                  </Link>
+                </td>
+                <td className="border-bottom">{vacancy.companyName}</td>
+                <td className="border-bottom">{vacancy.jobLocation}</td>
+                <td className="border-bottom">{vacancy.salary}</td>
+                <td className="border-bottom">{vacancy.deadline}</td>
+                <td className="border-bottom">{vacancy.gender}</td>
+                <td className="border-bottom">{vacancy.jobFunction}</td>
+                <td className="border-bottom">
+                  <select
+                    value={vacancy.status} // Ensure this reflects the current status
+                    onChange={(e) =>
+                      statusChangeHandler(vacancy._id, e.target.value)
+                    }
+                    className="form-select"
+                  >
+                    <option value="completed">Completed</option>
+                    <option value="Pending">Pending</option>
+                  </select>
+                </td>
+              </tr>
             ))}
           </tbody>
         </Table>
 
         {/* Pagination Controls */}
         <div className="d-flex justify-content-between my-3">
-          <button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+          >
             Previous
           </button>
-          <span>Page {currentPage} of {Math.ceil(totalVacancies / entriesPerPage)}</span>
-          <button onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(totalVacancies / entriesPerPage)))} disabled={currentPage === Math.ceil(totalVacancies / entriesPerPage)}>
+          <span>
+            Page {currentPage} of {Math.ceil(totalVacancies / entriesPerPage)}
+          </span>
+          <button
+            onClick={() =>
+              setCurrentPage((prev) =>
+                Math.min(prev + 1, Math.ceil(totalVacancies / entriesPerPage))
+              )
+            }
+            disabled={currentPage === Math.ceil(totalVacancies / entriesPerPage)}
+          >
             Next
           </button>
         </div>
@@ -1519,13 +1531,20 @@ export const AllotedVacansiesByEmployee = ({ vacancyListState, pending }) => {
   );
 };
 
-export const IncompleteVacanciesTable = ({ vacancyListState }) => {
+
+export const IncompleteVacanciesTable = ({ vacancyListState,allvac }) => {
   const dispatch = useDispatch();
+
+  const employees = useSelector((state) => state?.employee?.allEmployees);
+
   
   const [reasons, setReasons] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(10); // Default entries per page
 
+  const handleAllotedToChange = (vacancyId, employeeId) => {
+    dispatch(editVacancy({ id: vacancyId, allotedTo: employeeId }));
+  };
   // Handler to update the status of a specific vacancy
   const statusChangeHandler = (id, status) => {
     dispatch(editVacancy({ id, status }));
@@ -1583,6 +1602,7 @@ export const IncompleteVacanciesTable = ({ vacancyListState }) => {
               <th className="border-bottom">Location</th>
               <th className="border-bottom">Salary</th>
               <th className="border-bottom">Deadline</th>
+              <th className="border-bottom px-6">Alloted To</th>
               <th className="border-bottom">Gender</th>
               <th className="border-bottom">Job Function</th>
               <th className="border-bottom px-6">Status</th>
@@ -1607,6 +1627,22 @@ export const IncompleteVacanciesTable = ({ vacancyListState }) => {
                 <td className="border-bottom">{vacancy.jobLocation}</td>
                 <td className="border-bottom">{vacancy.salary}</td>
                 <td className="border-bottom">{vacancy.deadline}</td>
+                <td className="border-bottom">
+                  <Form.Control
+                    as="select"
+                    value={vacancy.allotedTo?._id || ''}
+                    onChange={(e) => handleAllotedToChange(vacancy._id, e.target.value)}
+                  >
+                    <option value="">Select Employee</option>
+                    {employees?.map((employee) =>
+                      employee.role !== 'admin' ? (
+                        <option key={employee._id} value={employee._id}>
+                          {employee.name}
+                        </option>
+                      ) : null
+                    )}
+                  </Form.Control>
+                </td>
                 <td className="border-bottom">{vacancy.gender}</td>
                 <td className="border-bottom">{vacancy.jobFunction}</td>
                 <td className="border-bottom">
@@ -1619,16 +1655,24 @@ export const IncompleteVacanciesTable = ({ vacancyListState }) => {
                     <option value="Pending">Pending</option>
                   </select>
                 </td>
+                
                 <td className="border-bottom">
-                  <textarea
-                    value={reasons[vacancy._id] || vacancy.reason || ''}
-                    onChange={(e) => handleReasonChange(vacancy._id, e.target.value)}
-                    onKeyDown={(e) => handleReasonSubmit(e, vacancy._id)}
-                    placeholder="Enter reason"
-                    rows={2}
-                    className="form-control"
-                  />
+                  {!allvac ? 
+                      <textarea
+                      value={reasons[vacancy._id] || vacancy.reason || ''}
+                      onChange={(e) => handleReasonChange(vacancy._id, e.target.value)}
+                      onKeyDown={(e) => handleReasonSubmit(e, vacancy._id)}
+                      placeholder="Enter reason"
+                      rows={2}
+                      className="form-control"
+                    />
+                    :
+                    <p>{vacancy.reason}</p>
+                  }
+                  
                 </td>
+                
+                
               </tr>
             ))}
           </tbody>

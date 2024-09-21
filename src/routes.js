@@ -16,6 +16,7 @@ export const Routes = {
     NotAllotedVacancies:{path:'/admin/not-alloted-vacancies'},
     TodayAllotedVac:{path:'/admin/today-alloted-vac'},
     TodayCompletedVac:{path:'/admin/today-completed-vacancies'},
+    TotalIncompletedVac:{path:'/admin/total-incompleted-vacancies'},
     AdminPending:{path:'/admin/pending-vacancies'},
     TodaysTotalInterview:{path:'/admin/todays-interview'},
     AdminCompleted:{path:'/admin/completed-vacancies'},

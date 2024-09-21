@@ -7,7 +7,7 @@ import { AdminTable } from '../Tables';
 export default () => {
     
     const allVacancies = useSelector(state => state.vacancy?.allVacancies)
-    const pendingVacancies = allVacancies?.filter(vacancy => vacancy.status === "Pending");
+    const pendingVacancies = allVacancies?.filter(vacancy => vacancy.status === "Pending" && new Date(vacancy.deadline).toLocaleDateString() >= new Date().toLocaleDateString());
   return (
    <>
     <AdminTable vacancyListState={pendingVacancies}/>

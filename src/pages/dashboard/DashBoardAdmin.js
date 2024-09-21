@@ -25,6 +25,7 @@ export default () => {
     emailed: 0,
     todayAlloted:0,
     todayCompleted:0,
+    totalIncompleted:0,
 
   });
 
@@ -59,6 +60,10 @@ export default () => {
         return completedDate ==today;
       }).length;
 
+      const totalIncompleteCount = allVacancies.filter(vac => 
+        vac.status === "Pending" && new Date(vac.deadline).toLocaleDateString() < new Date().toLocaleDateString()
+      ).length;
+
       setVacancyCounts({
         alloted: allotedCount,
         notAlloted: notAllotedCount,
@@ -66,7 +71,8 @@ export default () => {
         completed: completedCount,
         emailed: emailSent,
         todayAlloted:todayAllotedCount,
-        todayCompleted:todayCompletedCount
+        todayCompleted:todayCompletedCount,
+        totalIncompleted:totalIncompleteCount
       });
     }
   }, [allVacancies]);
@@ -107,7 +113,7 @@ export default () => {
         <Col xs={12} sm={6} xl={3} className="mb-4">
           <CounterWidget
             category="Total Pending"
-            title={vacancyCounts.pending}
+            title={vacancyCounts.pending-vacancyCounts.totalIncompleted}
             // icon={faCashRegister}
             to='/admin/pending-vacancies'
           />
@@ -150,6 +156,14 @@ export default () => {
             title={vacancyCounts.todayCompleted}
             // icon={faCashRegister}
             to='/admin/today-completed-vacancies'
+          />
+        </Col>
+        <Col xs={12} sm={6} xl={3} className="mb-4">
+          <CounterWidget
+            category="Total InCompleted"
+            title={vacancyCounts.totalIncompleted}
+            // icon={faCashRegister}
+            to='/admin/total-incompleted-vacancies'
           />
         </Col>
       </Row>
@@ -206,7 +220,7 @@ export default () => {
               <td className="border-bottom">{idx}</td>
               <td className="border-bottom">{emp?.name}</td>
             <td className="border-bottom"><Link to={`/alloted-vacancies/${idx}`}>{employeeData.allotedVacancies?.length || 0} </Link></td> 
-             <td className="border-bottom"><Link to={`/pending-vacancies/${idx}`}>{employeePendingVacancies}</Link></td>
+             <td className="border-bottom"><Link to={`/pending-vacancies/${idx}`}>{employeePendingVacancies-incompleteVacCount}</Link></td>
               <td className="border-bottom"><Link to={`/completed-vacancies/${idx}`}>{employeeCompletedVacancies}</Link></td>
               <td className="border-bottom"><Link to={`/todays-interviews/${idx}`}>{interviewCount}</Link></td>
               <td className="border-bottom"><Link to={`/incomplete-vac/${idx}`}>{incompleteVacCount}</Link></td>
