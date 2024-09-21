@@ -1532,25 +1532,23 @@ export const AllotedVacansiesByEmployee = ({ vacancyListState, pending }) => {
 };
 
 
-export const IncompleteVacanciesTable = ({ vacancyListState,allvac }) => {
+export const IncompleteVacanciesTable = ({ vacancyListState, allvac }) => {
   const dispatch = useDispatch();
-
   const employees = useSelector((state) => state?.employee?.allEmployees);
 
-  
   const [reasons, setReasons] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(10); // Default entries per page
+  const [editedDeadlines, setEditedDeadlines] = useState({}); // Store edited deadlines locally
 
   const handleAllotedToChange = (vacancyId, employeeId) => {
     dispatch(editVacancy({ id: vacancyId, allotedTo: employeeId }));
   };
-  // Handler to update the status of a specific vacancy
+
   const statusChangeHandler = (id, status) => {
     dispatch(editVacancy({ id, status }));
   };
 
-  // Handler to capture the reason input
   const handleReasonChange = (id, reason) => {
     setReasons((prev) => ({
       ...prev,
@@ -1558,7 +1556,6 @@ export const IncompleteVacanciesTable = ({ vacancyListState,allvac }) => {
     }));
   };
 
-  // Handler to dispatch the reason update on Enter key press
   const handleReasonSubmit = (e, id) => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -1570,11 +1567,19 @@ export const IncompleteVacanciesTable = ({ vacancyListState,allvac }) => {
     }
   };
 
-  // Pagination logic
+  const handleDeadlineChange = (id, newDeadline) => {
+    setEditedDeadlines((prev) => ({
+      ...prev,
+      [id]: newDeadline,
+    }));
+
+    dispatch(editVacancy({ id, deadline: newDeadline }));
+    alert("Deadline updated successfully!");
+  };
+
   const indexOfLastVacancy = currentPage * entriesPerPage;
   const indexOfFirstVacancy = indexOfLastVacancy - entriesPerPage;
   const currentVacancies = vacancyListState?.slice(indexOfFirstVacancy, indexOfLastVacancy);
-  
   const totalVacancies = vacancyListState?.length;
 
   return (
@@ -1583,10 +1588,13 @@ export const IncompleteVacanciesTable = ({ vacancyListState,allvac }) => {
         {/* Entries per page */}
         <div className="my-3">
           <label>Entries per page: </label>
-          <select value={entriesPerPage} onChange={(e) => {
-            setEntriesPerPage(Number(e.target.value));
-            setCurrentPage(1); // Reset to the first page when entries per page change
-          }}>
+          <select
+            value={entriesPerPage}
+            onChange={(e) => {
+              setEntriesPerPage(Number(e.target.value));
+              setCurrentPage(1); // Reset to the first page when entries per page change
+            }}
+          >
             <option value={5}>5</option>
             <option value={10}>10</option>
             <option value={20}>20</option>
@@ -1626,7 +1634,22 @@ export const IncompleteVacanciesTable = ({ vacancyListState,allvac }) => {
                 <td className="border-bottom">{vacancy.companyName}</td>
                 <td className="border-bottom">{vacancy.jobLocation}</td>
                 <td className="border-bottom">{vacancy.salary}</td>
-                <td className="border-bottom">{vacancy.deadline}</td>
+                
+                <td className="border-bottom">
+                  {allvac ? (
+                    <div>
+                      <input
+                        type="date"
+                        value={editedDeadlines[vacancy._id] || vacancy.deadline || ''}
+                        onChange={(e) => handleDeadlineChange(vacancy._id, e.target.value)}
+                        // onKeyDown={(e) => handleDeadlineKeyDown(e, vacancy._id)} // Trigger on 'Enter' key press
+                      />
+                    </div>
+                  ) : (
+                    vacancy.deadline
+                  )}
+                </td>
+
                 <td className="border-bottom">
                   <Form.Control
                     as="select"
@@ -1657,8 +1680,8 @@ export const IncompleteVacanciesTable = ({ vacancyListState,allvac }) => {
                 </td>
                 
                 <td className="border-bottom">
-                  {!allvac ? 
-                      <textarea
+                  {!allvac ? (
+                    <textarea
                       value={reasons[vacancy._id] || vacancy.reason || ''}
                       onChange={(e) => handleReasonChange(vacancy._id, e.target.value)}
                       onKeyDown={(e) => handleReasonSubmit(e, vacancy._id)}
@@ -1666,13 +1689,10 @@ export const IncompleteVacanciesTable = ({ vacancyListState,allvac }) => {
                       rows={2}
                       className="form-control"
                     />
-                    :
+                  ) : (
                     <p>{vacancy.reason}</p>
-                  }
-                  
+                  )}
                 </td>
-                
-                
               </tr>
             ))}
           </tbody>
@@ -1680,11 +1700,18 @@ export const IncompleteVacanciesTable = ({ vacancyListState,allvac }) => {
 
         {/* Pagination Controls */}
         <div className="d-flex justify-content-between my-3">
-          <button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
+          <button onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
             Previous
           </button>
-          <span>Page {currentPage} of {Math.ceil(totalVacancies / entriesPerPage)}</span>
-          <button onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(totalVacancies / entriesPerPage)))} disabled={currentPage === Math.ceil(totalVacancies / entriesPerPage)}>
+          <span>
+            Page {currentPage} of {Math.ceil(totalVacancies / entriesPerPage)}
+          </span>
+          <button
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, Math.ceil(totalVacancies / entriesPerPage)))
+            }
+            disabled={currentPage === Math.ceil(totalVacancies / entriesPerPage)}
+          >
             Next
           </button>
         </div>
@@ -1692,6 +1719,7 @@ export const IncompleteVacanciesTable = ({ vacancyListState,allvac }) => {
     </Card>
   );
 };
+
 
 export const AllotedCompletedVacansiesByEmployee = ({ vacancyListState }) => {
   const dispatch = useDispatch();
