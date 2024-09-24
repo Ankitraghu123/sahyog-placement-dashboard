@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux';
-import TodaysInterview from '../TodaysInterview';
+import { TodaysInterview } from '../Tables';
 
 const TodayTotalInterviews = () => {
     const allVacancies = useSelector(state => state.vacancy?.allVacancies);

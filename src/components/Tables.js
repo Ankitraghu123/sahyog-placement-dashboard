@@ -1297,9 +1297,10 @@ export const AllCompletedVacancyTable = ({ todayVac }) => {
 
 
 
-export const VacancyTableByCompany = ({vacancyListState}) => {
+export const VacancyTableByCompany = ({ vacancyListState }) => {
   const dispatch = useDispatch();
-
+  
+  const [searchQuery, setSearchQuery] = useState(''); // State for search query
   
   const totalVacancies = vacancyListState?.length;
 
@@ -1307,45 +1308,69 @@ export const VacancyTableByCompany = ({vacancyListState}) => {
     dispatch(deleteVacancy(id));
   };
 
+  // Filtered vacancies based on search query
+  const filteredVacancies = vacancyListState?.filter(vacancy => 
+    vacancy.role.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    vacancy.jobLocation.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
-    <Card border="light" className="table-wrapper table-responsive shadow-sm">
-      <Card.Body className="pt-0">
-        <Table hover className="user-table align-items-center">
-          <thead>
-            <tr>
-              <th className="border-bottom">S.NO</th>
-              <th className="border-bottom">Job Title</th>
-              <th className="border-bottom">Company Name</th>
-              <th className="border-bottom">Location</th>
-              <th className="border-bottom">Salary</th>
-              {/* <th className="border-bottom">Job Type</th> */}
-              <th className="border-bottom">Dead Line</th>
-              {/* <th className="border-bottom">  <FontAwesomeIcon icon={faTrashAlt} /> </th> */}
-              {/* <th className="border-bottom"><FontAwesomeIcon icon={faEdit} /></th> */}
-            </tr>
-          </thead>
-          <tbody>
-            {
-              vacancyListState?.map((vacancy, idx) => {
-                return (
-                  <tr key={vacancy._id}>
-                    <td className="border-bottom">{idx + 1}</td>
-                    <td className="border-bottom"><Link to={`/candidate-shortlisted/${vacancy._id}`}>{vacancy.role}</Link></td>
-                    <td className="border-bottom">{vacancy.companyName}</td>
-                    <td className="border-bottom">{vacancy.jobLocation}</td>
-                    <td className="border-bottom">{vacancy.salary}</td>
-                    <td className="border-bottom">{vacancy.deadline}</td>
-                    <td className="border-bottom cursor-pointer" >  <FontAwesomeIcon onClick={() => deleteHandler(vacancy._id)} icon={faTrashAlt} /> </td>
-                    <td className="border-bottom"><Link to={`/edit-vacancy/${vacancy._id}`}><FontAwesomeIcon icon={faEdit} /></Link></td>
-                  </tr>
-                );
-              })
-            }
-          </tbody>
-        </Table>
-      
-      </Card.Body>
-    </Card>
+    <>
+      {/* Search bar */}
+      <Form className="mb-4">
+        <Form.Control 
+          type="text" 
+          placeholder="Search by job title or location..." 
+          value={searchQuery} 
+          onChange={(e) => setSearchQuery(e.target.value)} 
+        />
+      </Form>
+
+      <Card border="light" className="table-wrapper table-responsive shadow-sm">
+        <Card.Body className="pt-0">
+          <Table hover className="user-table align-items-center">
+            <thead>
+              <tr>
+                <th className="border-bottom">S.NO</th>
+                <th className="border-bottom">Job Title</th>
+                <th className="border-bottom">Company Name</th>
+                <th className="border-bottom">No. Of Posts</th>
+                <th className="border-bottom">Location</th>
+                <th className="border-bottom">Salary</th>
+                <th className="border-bottom">Dead Line</th>
+                <th className="border-bottom"></th>
+                <th className="border-bottom"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                filteredVacancies?.map((vacancy, idx) => {
+                  return (
+                    <tr key={vacancy._id}>
+                      <td className="border-bottom">{idx + 1}</td>
+                      <td className="border-bottom">
+                        <Link to={`/candidate-shortlisted/${vacancy._id}`}>{vacancy.role}</Link>
+                      </td>
+                      <td className="border-bottom">{vacancy.companyName}</td>
+                      <td className="border-bottom">{vacancy.numberOfJobOpenings}</td>
+                      <td className="border-bottom">{vacancy.jobLocation}</td>
+                      <td className="border-bottom">{vacancy.salary}</td>
+                      <td className="border-bottom">{vacancy.deadline}</td>
+                      <td className="border-bottom cursor-pointer">
+                        <FontAwesomeIcon onClick={() => deleteHandler(vacancy._id)} icon={faTrashAlt} />
+                        <Link to={`/edit-vacancy/${vacancy._id}`} className="ms-2">
+                          <FontAwesomeIcon icon={faEdit} />
+                        </Link>
+                      </td>
+                    </tr>
+                  );
+                })
+              }
+            </tbody>
+          </Table>
+        </Card.Body>
+      </Card>
+    </>
   );
 };
 
@@ -1456,6 +1481,7 @@ export const AllotedVacansiesByEmployee = ({ vacancyListState, pending }) => {
               <th className="border-bottom">Job Title</th>
               <th className="border-bottom">Company Name</th>
               <th className="border-bottom">Location</th>
+              <th className="border-bottom">No. Of Posts</th>
               <th className="border-bottom">Salary</th>
               <th className="border-bottom">Deadline</th>
               <th className="border-bottom">Gender</th>
@@ -1483,6 +1509,7 @@ export const AllotedVacansiesByEmployee = ({ vacancyListState, pending }) => {
                 </td>
                 <td className="border-bottom">{vacancy.companyName}</td>
                 <td className="border-bottom">{vacancy.jobLocation}</td>
+                <td className="border-bottom">{vacancy.numberOfJobOpenings}</td>
                 <td className="border-bottom">{vacancy.salary}</td>
                 <td className="border-bottom">{vacancy.deadline}</td>
                 <td className="border-bottom">{vacancy.gender}</td>
@@ -1816,14 +1843,15 @@ export const AllotedCompletedVacansiesByEmployee = ({ vacancyListState }) => {
   );
 };
 
-export const TodaysInterview = ({ vacancyListState }) => {
+export const TodaysInterview = (props ) => {
   const today = new Date().toLocaleDateString('en-GB'); // Get today's date in DD-MM-YYYY format
 
   // Filter the vacancies to only include those with today's interview date
-  const todaysInterviews = vacancyListState?.filter(vacancy => {
+  const todaysInterviews = props.vacancyListState?.filter(vacancy => {
     const interviewDate = new Date(vacancy.interviewSheduled).toLocaleDateString('en-GB');
     return interviewDate === today;
   });
+
 
   return (
     <Card border="light" className="table-wrapper table-responsive shadow-sm">
