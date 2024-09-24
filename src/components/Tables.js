@@ -363,7 +363,7 @@ export const CandidateTable = () => {
                   <td className="border-bottom">{candidate.mobile}</td>
                   <td className="border-bottom">{candidate.status}</td>
                   <td className="border-bottom">{candidate.city}</td>
-                  <td className="border-bottom">{candidate.highestQualification}</td>
+                  <td className="border-bottom">{candidate.highestQualification}   {candidate.highestQualificationSubject}</td>
                   <td className="border-bottom cursor-pointer">
                     <FontAwesomeIcon onClick={() => deleteHandler(candidate._id)} icon={faTrashAlt} />
                     <Link className="ms-2" to={`/edit-candidate/${candidate._id}`}><FontAwesomeIcon icon={faEdit} /></Link>
