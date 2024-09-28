@@ -63,7 +63,7 @@ export default () => {
             percentage={10.57}
           />
         </Col> */}
-        <Col xs={12} sm={6} xl={3} className="mb-4">
+        <Col xs={6} sm={6} xl={3} className="mb-4">
           <CounterWidget
             category="Alloted Vacancies"
             title={employee?.allotedVacancies?.length || 0}
@@ -71,7 +71,7 @@ export default () => {
             to={`/alloted-vacancies/${employee?._id}`}
           />
         </Col>
-        <Col xs={12} sm={6} xl={3} className="mb-4">
+        <Col xs={6} sm={6} xl={3} className="mb-4">
           <CounterWidget
             category="Pending Vacancies"
             title={pendingVac - inCompleteVac }
@@ -79,7 +79,7 @@ export default () => {
             to={`/pending-vacancies/${employee?._id}`}
           />
         </Col>
-        <Col xs={12} sm={6} xl={3} className="mb-4">
+        <Col xs={6} sm={6} xl={3} className="mb-4">
           <CounterWidget
             category="Completed Vacancies"
             title={employee?.allotedVacancies?.length-pendingVac}
@@ -87,7 +87,7 @@ export default () => {
             to={`/completed-vacancies/${employee?._id}`}
           />
         </Col>
-        <Col xs={12} sm={6} xl={3} className="mb-4">
+        <Col xs={6} sm={6} xl={3} className="mb-4">
           <CounterWidget
             category="Emailed vacancies"
             title={mail}
@@ -95,7 +95,7 @@ export default () => {
             to='/mail-sent'
           />
         </Col>
-        <Col xs={12} sm={6} xl={3} className="mb-4">
+        <Col xs={6} sm={6} xl={3} className="mb-4">
           <CounterWidget
             category="Incomplete vacancies"
             title={inCompleteVac}

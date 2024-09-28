@@ -93,7 +93,7 @@ export default () => {
   return (
     <>
       <Row className="justify-content-md-center">
-        <Col xs={12} sm={6} xl={3} className="mb-4">
+        <Col xs={6} sm={6} xl={3} className="mb-4">
           <CounterWidget
             category="Total Alloted"
             title={vacancyCounts.alloted}
@@ -101,7 +101,7 @@ export default () => {
             to='/admin/alloted-vacancies'
           />
         </Col>
-        <Col xs={12} sm={6} xl={3} className="mb-4">
+        <Col xs={6} sm={6} xl={3} className="mb-4">
           <CounterWidget
             category="Not Alloted" // New widget for not allotted vacancies
             title={vacancyCounts.notAlloted}
@@ -110,7 +110,7 @@ export default () => {
           />
         </Col>
 
-        <Col xs={12} sm={6} xl={3} className="mb-4">
+        <Col xs={6} sm={6} xl={3} className="mb-4">
           <CounterWidget
             category="Total Pending"
             title={vacancyCounts.pending-vacancyCounts.totalIncompleted}
@@ -118,7 +118,7 @@ export default () => {
             to='/admin/pending-vacancies'
           />
         </Col>
-        <Col xs={12} sm={6} xl={3} className="mb-4">
+        <Col xs={6} sm={6} xl={3} className="mb-4">
           <CounterWidget
             category="Total Completed"
             title={vacancyCounts.completed}
@@ -126,7 +126,7 @@ export default () => {
             to='/admin/completed-vacancies'
           />
         </Col>
-        <Col xs={12} sm={6} xl={3} className="mb-4">
+        <Col xs={6} sm={6} xl={3} className="mb-4">
           <CounterWidget
             category="Emailed"
             title={vacancyCounts.emailed}
@@ -134,7 +134,7 @@ export default () => {
             to='/admin/emailSent-vacancies'
           />
         </Col>
-        <Col xs={12} sm={6} xl={3} className="mb-4">
+        <Col xs={6} sm={6} xl={3} className="mb-4">
           <CounterWidget
             category="Todays Interiew"
             title={interview}
@@ -142,7 +142,7 @@ export default () => {
             to='/admin/todays-interview'
           />
         </Col>
-        <Col xs={12} sm={6} xl={3} className="mb-4">
+        <Col xs={6} sm={6} xl={3} className="mb-4">
           <CounterWidget
             category="Todays Alloted"
             title={vacancyCounts.todayAlloted}
@@ -150,7 +150,7 @@ export default () => {
             to='/admin/today-alloted-vac'
           />
         </Col>
-        <Col xs={12} sm={6} xl={3} className="mb-4">
+        <Col xs={6} sm={6} xl={3} className="mb-4">
           <CounterWidget
             category="Todays Completed"
             title={vacancyCounts.todayCompleted}
@@ -158,7 +158,7 @@ export default () => {
             to='/admin/today-completed-vacancies'
           />
         </Col>
-        <Col xs={12} sm={6} xl={3} className="mb-4">
+        <Col xs={6} sm={6} xl={3} className="mb-4">
           <CounterWidget
             category="Total InCompleted"
             title={vacancyCounts.totalIncompleted}

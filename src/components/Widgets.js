@@ -77,7 +77,7 @@ export const CounterWidget = (props) => {
             {/* <div className={`icon icon-shape icon-md icon-${iconColor} rounded me-4 me-sm-0`}> */}
               {/* <FontAwesomeIcon icon={icon} /> */}
             {/* </div> */}
-            <div className="d-sm-none">
+            <div className="d-sm-none text-center">
               <h5>{category}</h5>
               <h3 className="mb-1">{title}</h3>
             </div>
