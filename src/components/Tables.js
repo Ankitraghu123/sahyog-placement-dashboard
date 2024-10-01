@@ -1437,12 +1437,16 @@ export const AllotedVacansiesByEmployee = ({ vacancyListState, pending }) => {
 
   // Filter the vacancies based on pending status if `pending` is true
   const filteredVacancies = pending
-    ? vacancyListState?.filter(
-        (vacancy) =>
-          vacancy.status === "Pending" &&
-          new Date(vacancy.deadline).toLocaleDateString() >=
-            new Date().toLocaleDateString()
-      )
+    ? vacancyListState?.filter(vacancy => {
+      const deadlineDate = new Date(vacancy.deadline);
+      const currentDate = new Date();
+    
+      // Set time of both dates to midnight (00:00:00) to ignore the time part
+      deadlineDate.setHours(0, 0, 0, 0);
+      currentDate.setHours(0, 0, 0, 0);
+    
+      return vacancy.status === "Pending" && deadlineDate >= currentDate;
+    })
     : vacancyListState;
 
   // Pagination logic

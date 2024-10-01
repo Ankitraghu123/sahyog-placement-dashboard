@@ -39,9 +39,16 @@ export default () => {
       }).length;
       setInterview(interviewCount)
 
-      const incompleteVacCount = employee.allotedVacancies.filter(vac => 
-        vac.status === "Pending" && new Date(vac.deadline).toLocaleDateString() < new Date().toLocaleDateString()
-      ).length;
+      const incompleteVacCount = employee.allotedVacancies.filter(vacancy => {
+        const deadlineDate = new Date(vacancy.deadline);
+        const currentDate = new Date();
+      
+        // Set time of both dates to midnight (00:00:00) to ignore the time part
+        deadlineDate.setHours(0, 0, 0, 0);
+        currentDate.setHours(0, 0, 0, 0);
+      
+        return vacancy.status === "Pending" && deadlineDate < currentDate;
+      }).length;
       setIncompleteVac(incompleteVacCount)
     }
   }, [employee]);

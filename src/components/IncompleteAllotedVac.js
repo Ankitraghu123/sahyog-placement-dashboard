@@ -21,9 +21,16 @@ export default () => {
   }
 
   // Filter the allotedVacancies to include only those with "Pending" status and deadline greater than current date
-  const pendingVacancies = employeDetail?.allotedVacancies?.filter(vacancy => 
-    vacancy.status === "Pending" && new Date(vacancy.deadline).toLocaleDateString() < new Date().toLocaleDateString()
-  );
+  const pendingVacancies = employeDetail?.allotedVacancies?.filter(vacancy => {
+    const deadlineDate = new Date(vacancy.deadline);
+    const currentDate = new Date();
+  
+    // Set time of both dates to midnight (00:00:00) to ignore the time part
+    deadlineDate.setHours(0, 0, 0, 0);
+    currentDate.setHours(0, 0, 0, 0);
+  
+    return vacancy.status === "Pending" && deadlineDate < currentDate;
+  });
 
 
   return (

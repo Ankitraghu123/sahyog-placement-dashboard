@@ -60,9 +60,16 @@ export default () => {
         return completedDate ==today;
       }).length;
 
-      const totalIncompleteCount = allVacancies.filter(vac => 
-        vac.status === "Pending" && new Date(vac.deadline).toLocaleDateString() < new Date().toLocaleDateString()
-      ).length;
+      const totalIncompleteCount = allVacancies.filter(vacancy => {
+        const deadlineDate = new Date(vacancy.deadline);
+        const currentDate = new Date();
+      
+        // Set time of both dates to midnight (00:00:00) to ignore the time part
+        deadlineDate.setHours(0, 0, 0, 0);
+        currentDate.setHours(0, 0, 0, 0);
+      
+        return vacancy.status === "Pending" && deadlineDate < currentDate;
+      }).length;
 
       setVacancyCounts({
         alloted: allotedCount,
@@ -210,9 +217,16 @@ export default () => {
             return interviewDate === today;
           }).length;
 
-          const incompleteVacCount = employeeData.allotedVacancies.filter(vac => 
-            vac.status === "Pending" && new Date(vac.deadline).toLocaleDateString() < new Date().toLocaleDateString()
-          ).length;
+          const incompleteVacCount = employeeData.allotedVacancies.filter(vacancy => {
+            const deadlineDate = new Date(vacancy.deadline);
+            const currentDate = new Date();
+          
+            // Set time of both dates to midnight (00:00:00) to ignore the time part
+            deadlineDate.setHours(0, 0, 0, 0);
+            currentDate.setHours(0, 0, 0, 0);
+          
+            return vacancy.status === "Pending" && deadlineDate < currentDate;
+          }).length;
 
           return (
             <tbody>
