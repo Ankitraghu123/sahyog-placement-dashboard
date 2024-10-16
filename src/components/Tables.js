@@ -1571,6 +1571,7 @@ export const IncompleteVacanciesTable = ({ vacancyListState, allvac }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(10); // Default entries per page
   const [editedDeadlines, setEditedDeadlines] = useState({}); // Store edited deadlines locally
+  const [searchQuery, setSearchQuery] = useState(''); // Search query state
 
   const handleAllotedToChange = (vacancyId, employeeId) => {
     dispatch(editVacancy({ id: vacancyId, allotedTo: employeeId }));
@@ -1608,14 +1609,40 @@ export const IncompleteVacanciesTable = ({ vacancyListState, allvac }) => {
     alert("Deadline updated successfully!");
   };
 
+  // Filter the vacancyListState based on search query
+  const filteredVacancies = vacancyListState?.filter((vacancy) => {
+    return (
+      vacancy.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      vacancy.companyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      vacancy.jobLocation.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      vacancy.salary.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (vacancy.allotedTo?.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      vacancy.gender.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      vacancy.jobFunction.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      vacancy.status.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (vacancy.reason || '').toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  });
+
   const indexOfLastVacancy = currentPage * entriesPerPage;
   const indexOfFirstVacancy = indexOfLastVacancy - entriesPerPage;
-  const currentVacancies = vacancyListState?.slice(indexOfFirstVacancy, indexOfLastVacancy);
-  const totalVacancies = vacancyListState?.length;
+  const currentVacancies = filteredVacancies?.slice(indexOfFirstVacancy, indexOfLastVacancy);
+  const totalVacancies = filteredVacancies?.length;
 
   return (
     <Card border="light" className="table-wrapper table-responsive shadow-sm">
       <Card.Body className="pt-0">
+        {/* Search Bar */}
+        <div className="my-3">
+          <input
+            type="text"
+            placeholder="Search..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="form-control"
+          />
+        </div>
+
         {/* Entries per page */}
         <div className="my-3">
           <label>Entries per page: </label>
@@ -1653,9 +1680,10 @@ export const IncompleteVacanciesTable = ({ vacancyListState, allvac }) => {
               <tr
                 key={vacancy._id}
                 style={{
-                  backgroundColor: new Date(vacancy.deadline).toLocaleDateString() === new Date().toLocaleDateString()
-                    ? 'rgba(220, 53, 69, 0.3)'
-                    : 'transparent',
+                  backgroundColor:
+                    new Date(vacancy.deadline).toLocaleDateString() === new Date().toLocaleDateString()
+                      ? 'rgba(220, 53, 69, 0.3)'
+                      : 'transparent',
                 }}
                 className="border-bottom"
               >
@@ -1665,7 +1693,7 @@ export const IncompleteVacanciesTable = ({ vacancyListState, allvac }) => {
                 <td className="border-bottom">{vacancy.companyName}</td>
                 <td className="border-bottom">{vacancy.jobLocation}</td>
                 <td className="border-bottom">{vacancy.salary}</td>
-                
+
                 <td className="border-bottom">
                   {allvac ? (
                     <div>
@@ -1673,7 +1701,6 @@ export const IncompleteVacanciesTable = ({ vacancyListState, allvac }) => {
                         type="date"
                         value={editedDeadlines[vacancy._id] || vacancy.deadline || ''}
                         onChange={(e) => handleDeadlineChange(vacancy._id, e.target.value)}
-                        // onKeyDown={(e) => handleDeadlineKeyDown(e, vacancy._id)} // Trigger on 'Enter' key press
                       />
                     </div>
                   ) : (
@@ -1709,7 +1736,7 @@ export const IncompleteVacanciesTable = ({ vacancyListState, allvac }) => {
                     <option value="Pending">Pending</option>
                   </select>
                 </td>
-                
+
                 <td className="border-bottom">
                   {!allvac ? (
                     <textarea
