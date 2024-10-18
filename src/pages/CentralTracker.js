@@ -170,7 +170,7 @@ export default () => {
                     />
                   </td>
                   {/* <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>{idx + 1}</td> */}
-                  <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>Sahyog job and multi work solutio</td> 
+                  <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>Sahyog job and multi work solutions</td> 
                   <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>
                   {candidate.name}
                     {/* <Link to={`/candidate-detail/${candidate._id}`}>{candidate.name}</Link> */}
