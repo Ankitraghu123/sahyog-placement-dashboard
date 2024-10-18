@@ -53,7 +53,7 @@ export default () => {
     
     return candidatesToExport.map((candidate, idx) => ({
       // 'Sr. NO': idx + 1, // Serial Number
-    'Consultant Name':  'Sahyog job and multi work solutio', // Consultant Name
+    'Consultant Name':  'Sahyog job and multi work solutions', // Consultant Name
     'Name Of Candidate': candidate.name || '', // Name Of Candidate
     'Phone No': candidate.mobile || '', // Phone No
     'Location':  candidate.city ? ` ${candidate.city}`: 'NA', // Location

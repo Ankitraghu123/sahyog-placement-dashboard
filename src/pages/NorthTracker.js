@@ -70,7 +70,7 @@ export default function CandidateList() {
       "AGE": candidate.dob ? calculateAge(candidate.dob) : '',
       "Notice Period": candidate.noticePeriod || '',
       "Remarks": candidate.remarks || '',
-      "Source": 'Sahyog job and multi work solutio'
+      "Source": 'Sahyog job and multi work solutions'
     }));
   }, [selectedCandidates, filteredCandidates, vacancy]);
 
