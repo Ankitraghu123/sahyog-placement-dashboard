@@ -57,26 +57,33 @@ export default () => {
     'Name Of Candidate': candidate.name || '', // Name Of Candidate
     'Phone No': candidate.mobile || '', // Phone No
     'Location':  candidate.city ? ` ${candidate.city}`: 'NA', // Location
-    'Qualification last degree': candidate.postGradSubject ? `Post Graduation- ${candidate.postGradSubject} ` : candidate.gradSubject ? `Graduation - ${candidate.gradSubject} ` : 'NA' , // Qualification
-    'Qualification last degree Percentage': candidate.postGradSubject ? ` ${candidate.postGradPercentage} ` : candidate.gradSubject ? ` ${candidate.gradPercentage} ` : 'NA' , // Qualification
+    'Qualification ': candidate.postGradSubject ? `Post Graduation- ${candidate.postGradSubject}- ${candidate.postGradPassingYear} ` : candidate.gradSubject ? `Graduation - ${candidate.gradSubject}- ${candidate.gradPassingYear} ` : 'NA' , // Qualification
+    // 'Qualification last degree Percentage': candidate.postGradSubject ? ` ${candidate.postGradPercentage} ` : candidate.gradSubject ? ` ${candidate.gradPercentage} ` : 'NA' , // Qualification
     'Last Company Name': candidate.lastCompanyName || '', // Last Company Name
     'Industry': candidate.industry || '', // Industry
     'Experience': candidate.experience || '', // Experience
-    'Remark': candidate.remark || '', // Remark
+    'Remark if any relax in criteria ': candidate.remark || '', // Remark
     'DOB': candidate.dob ? formatDate(candidate.dob) : '', // Date of Birth
     'Age': candidate.dob ? calculateAge(candidate.dob) : '', // Age (calculate if needed)
     'Gender': candidate.gender || '', // Gender
     'Mail ID': candidate.email || '', // Mail ID
-    'Second Qualification Degree':  candidate.gradSubject ? `Graduation- ${candidate.gradSubject} ` : candidate.twelfthSubject ? `Twelfth- ${candidate.twelfthSubject} ` : 'NA' , // Qualification Percentage
-    'Second Qualification Percentage': candidate.gradSubject ? ` ${candidate.gradPercentage} ` : candidate.twelfthSubject ? `${candidate.twelfthPercentage} ` : 'NA' , // Qualification Percentage
+
+    'Qualification last degree': candidate.postGradSubject ? `Post Graduation- ${candidate.postGradSubject}- ${candidate.postGradPassingYear} ` : candidate.gradSubject ? `Graduation - ${candidate.gradSubject}- ${candidate.gradPassingYear} ` : 'NA' ,
+
+     'Qualification last degree Percentage': candidate.postGradSubject ? ` ${candidate.postGradPercentage} ` : candidate.gradSubject ? ` ${candidate.gradPercentage} ` : 'NA' , 
+
+    ' Qualification Second Last Degree':  candidate.postGradSubject ? `Graduation- ${candidate.gradSubject}- ${candidate.gradPassingYear} ` : candidate.gradSubject ? `Twelfth- ${candidate.twelfthSubject}- ${candidate.twelfthPassingYear} ` : 'NA' , 
+
+    'Qualification Last Degree Percentage': candidate.postGradSubject ? ` ${candidate.gradPercentage} ` : candidate.gradSubject ? `${candidate.twelfthPercentage} ` : 'NA' , 
+
     'Hsc Year': candidate.twelfthPassingYear || '', // Hsc Year
     'Hsc Percentage': candidate.twelfthPercentage || '', // Hsc Percentage
     'SSc Year': candidate.tenthPassingYear || '', // SSc Year
     'SSc Percentage': candidate.tenthPercentage || '', // SSc Percentage
-    'Is CTC informed and okay?': candidate.ctcInformed ? 'Yes' : 'No', // Is CTC informed and okay?
-    'Is off-roll nature of job okay with candidate?': candidate.offRollNature ? 'Yes' : 'No', // Is off-roll nature of job okay with candidate?
-    'Is the on-roll opportunity explained with 18 months clause?': candidate.onRollOpportunityExplained ? 'Yes' : 'No', // Is the on-roll opportunity explained with 18 months clause?
-    'Do they have two wheeler and two wheeler license': candidate.twoWheelerAvailable ? 'Yes' : 'No', // Do they have two wheeler and two wheeler license
+    'Is CTC informed and okay?': 'Yes', // Is CTC informed and okay?
+    'Is off-roll nature of job okay with candidate?': 'Yes', // Is off-roll nature of job okay with candidate?
+    'Is the on-roll opportunity explained with 18 months clause?': 'Yes', // Is the on-roll opportunity explained with 18 months clause?
+    'Do they have two wheeler and two wheeler license': candidate.twoWheelerAvailable == false ? "no" : "yes", // Do they have two wheeler and two wheeler license
     'Communication skills rate by scale of 10': candidate.communicationSkillsRate || '', // Communication skills rate by scale of 10
     }));
   }, [selectedCandidates, filteredCandidates, vacancy]);
@@ -114,7 +121,7 @@ export default () => {
                 <th style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>Phone No</th>
                 <th style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>Location</th>
                 <th style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>highest Qualification </th>
-                <th style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>highest Qualification percentage </th>
+                {/* <th style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>highest Qualification percentage </th> */}
                 <th style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>Last Company Name</th>
                 <th style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>Industry</th>
                 <th style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>Experience</th>
@@ -123,9 +130,10 @@ export default () => {
                 <th style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>Age</th>
                 <th style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>Gender</th>
                 <th style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>Mail ID</th>
-
-                <th style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>Second Qualification </th>
-                <th style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>Second Qualification Percentage</th>
+<th style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>Qualification Last Degree </th>
+                <th style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}> Percentage</th>
+                <th style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>Qualification Last Degree </th>
+                <th style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}> Qualification Percentage</th>
 
                 <th style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>Hsc Year</th>
                 <th style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>Percentage</th>
@@ -146,6 +154,7 @@ export default () => {
             </thead>
             <tbody>
               {filteredCandidates?.map((candidate, idx) => (
+
                 <tr key={candidate._id}>
                    <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>
                     <input
@@ -168,10 +177,10 @@ export default () => {
                   </td>
                   <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>{candidate.mobile}</td>
                   <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>{candidate.city}</td>
-                  <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>{candidate.postGradSubject ? `Post Graduation- ${candidate.postGradSubject} ` : candidate.gradSubject ? `Graduation - ${candidate.gradSubject} ` : 'NA'}</td>
-                  <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>
+                  <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>{candidate.postGradSubject ? `Post Graduation- ${candidate.postGradSubject}- ${candidate.postGradPassingYear} ` : candidate.gradSubject ? `Graduation - ${candidate.gradSubject} - ${candidate.gradPassingYear}` : 'NA'}</td>
+                  {/* <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>
                     {candidate.postGradSubject ? ` ${candidate.postGradPercentage} ` : candidate.gradSubject ? `${candidate.gradPercentage} ` : 'NA'}
-                  </td>
+                  </td> */}
                   <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}></td>
                   <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}></td>
                   <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}></td>
@@ -180,17 +189,21 @@ export default () => {
                   <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>{calculateAge(candidate.dob)}</td>
                   <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>{candidate.gender}</td>
                   <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>{candidate.email}</td>
+                  <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>{candidate.postGradSubject ? `Post Graduation- ${candidate.postGradSubject}- ${candidate.postGradPassingYear} ` : candidate.gradSubject ? `Graduation - ${candidate.gradSubject} - ${candidate.gradPassingYear}` : 'NA'}</td>
                   <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>
-                  {candidate.gradSubject ? `Graduation- ${candidate.gradSubject} ` : candidate.twelfthSubject ? `Twelfth- ${candidate.twelfthSubject} ` : 'NA'}
+                    {candidate.postGradSubject ? ` ${candidate.postGradPercentage} ` : candidate.gradSubject ? `${candidate.gradPercentage} ` : 'NA'}
                   </td>
                   <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>
-                  {candidate.gradSubject ? ` ${candidate.gradPercentage} ` : candidate.twelfthSubject ? ` ${candidate.twelfthPercentage} ` : 'NA'}
+                  {candidate.postGradSubject ? `Graduation- ${candidate.gradSubject} - ${candidate.gradPassingYear} ` : candidate.gradSubject ? `Twelfth- ${candidate.twelfthSubject}- ${candidate.twelfthPassingYear} ` : 'NA'}
+                  </td>
+                  <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>
+                  {candidate.postGradSubject ? ` ${candidate.gradPercentage} ` : candidate.gradSubject ? ` ${candidate.twelfthPercentage} ` : 'NA'}
                   </td>
 
-                  <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>{candidate.tenthPassingYear}</td>
-                  <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>{candidate.tenthPercentage}</td>
                   <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>{candidate.twelfthPassingYear}</td>
                   <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>{candidate.twelfthPercentage}</td>
+                  <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>{candidate.tenthPassingYear}</td>
+                  <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>{candidate.tenthPercentage}</td>
                   
                   
                   <td style={{borderBottomColor:'#FFFF6C',borderBottomWidth:'1px'}}>Yes</td>

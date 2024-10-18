@@ -17,8 +17,9 @@ export default () => {
     const allEmployees = useSelector(state => state?.employee?.allEmployees)
 
     let employeDetail = useSelector(state => state?.employee?.singleEmployee)
-
-    if(allEmployees){
+    // console.log(employeDetail)
+    if(!employeDetail && allEmployees){
+      
       employeDetail = allEmployees[id]
     }
   return (

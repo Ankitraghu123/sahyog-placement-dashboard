@@ -24,7 +24,7 @@ export default () => {
 
    
 
-    if(allEmployees){
+    if(!employeeData && allEmployees){
       employeeData = allEmployees[id]
     }
 
