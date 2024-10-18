@@ -215,6 +215,18 @@ export const CandidateTable = () => {
   const candidateListState = useSelector(state => state?.candidate?.candidatelist || []);
   const vacancyListState = useSelector(state => state?.employee?.singleEmployee?.allotedVacancies);
 
+  const filteredVacancies = vacancyListState?.filter(vacancy => {
+    const deadlineDate = new Date(vacancy.deadline);
+    const currentDate = new Date();
+  
+    // Set time of both dates to midnight (00:00:00) to ignore the time part
+    deadlineDate.setHours(0, 0, 0, 0);
+    currentDate.setHours(0, 0, 0, 0);
+  
+    return vacancy.status === "Pending" && deadlineDate >= currentDate;
+  })
+  
+
   const deleteHandler = (id) => {
     dispatch(deleteCandidate(id));
   };
@@ -398,7 +410,7 @@ export const CandidateTable = () => {
           <Form.Label>Select Vacancy</Form.Label>
           <Form.Control as="select" value={selectedVacancy} onChange={handleVacancyChange}>
             <option value="">Select a vacancy</option>
-            {vacancyListState?.map(vacancy => (
+            {filteredVacancies?.map(vacancy => (
   vacancy.status === 'Pending' ? (
     <option key={vacancy._id} value={vacancy._id}>
       {vacancy.role}-{vacancy.companyName}-{vacancy.jobLocation}
@@ -587,6 +599,8 @@ export const CandidateTableByJob = () => {
 
   const candidateListState = useSelector(state => state?.candidate?.shortListedCandidateByJob);
   const dispatch = useDispatch();
+
+
   
   // Handle status change
   const handleStatusChange = (candidateId, newStatus) => {
