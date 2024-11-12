@@ -57,7 +57,7 @@ export default function CandidateList() {
       "Current Organization": candidate.currentOrganization || '',
       "Contact Details": candidate.mobile || '',
       "Email ID": candidate.email || '',
-      "Higher Qualification": candidate.highestQualification ? `${candidate.highestQualification} - ${candidate.highestQualificationSubject}` : 'NA',
+      "Higher Qualification": candidate.postGradSubject ? `Post Graduation- ${candidate.postGradSubject}- ${candidate.postGradPassingYear} ` : candidate.gradSubject ? `Graduation - ${candidate.gradSubject}- ${candidate.gradPassingYear} ` : 'NA',
       "Exp CTC": candidate.expectedCTC || '',
       "Diploma Part / Full": candidate.diplomaDetails || '',
       "Graduation %": candidate.gradPercentage || '',
@@ -154,7 +154,7 @@ export default function CandidateList() {
       <td className="border-bottom border-warning">{candidate.currentOrganization}</td>
       <td className="border-bottom border-warning">{candidate.mobile}</td>
       <td className="border-bottom border-warning">{candidate.email}</td>
-      <td className="border-bottom border-warning">{candidate.highestQualification}-{candidate.highestQualificationSubject}</td>
+      <td className="border-bottom border-warning">{candidate.postGradSubject ? `Post Graduation- ${candidate.postGradSubject}- ${candidate.postGradPassingYear} ` : candidate.gradSubject ? `Graduation - ${candidate.gradSubject}- ${candidate.gradPassingYear} ` : 'NA'}</td>
       <td className="border-bottom border-warning">{candidate.expectedCTC}</td>
       <td className="border-bottom border-warning">{candidate.diplomaDetails}</td>
       <td className="border-bottom border-warning">{candidate.gradPercentage}</td>
