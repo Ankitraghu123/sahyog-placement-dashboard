@@ -207,9 +207,12 @@ export default () => {
 
           const todayCompletedVac = employeeData.allotedVacancies?.filter(vacancy => {
             const completedDate = new Date(vacancy.completedDate).toLocaleDateString('en-GB');
+            console.log('completed date',completedDate)
+            console.log('today',today2)
             return completedDate ==today2;
           }).length || 0
 
+          console.log(todayCompletedVac)
 
           const today = new Date().toLocaleDateString('en-GB');
           const interviewCount = employeeData.allotedVacancies?.filter(vac => {

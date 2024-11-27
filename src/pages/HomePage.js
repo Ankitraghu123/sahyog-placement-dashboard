@@ -55,6 +55,7 @@ import PendingVacancies from '../components/Admin/PendingVacancies';
 import NotEmailedVacancy from '../components/Admin/NotEmailedVacancy';
 import TodaysInterview from '../components/TodaysInterview';
 import NorthTracker from './NorthTracker';
+import EastTracker from './EastTracker';
 import ChangePassword from './ChangePassword';
 import NotAllotedVacancies from '../components/Admin/NotAllotedVacancies';
 import TodayTotalInterviews from '../components/Admin/TodayTotalInterviews'
@@ -174,6 +175,7 @@ export default () => (
     <RouteWithSidebar exact path={Routes.WestTracker.path} component={WestTracker} condition={isLoggedIn() || isEmployee()} />
     <RouteWithSidebar exact path={Routes.CentralTracker.path} component={CentralTracker} condition={isLoggedIn() || isEmployee()} />
     <RouteWithSidebar exact path={Routes.NorthTracker.path} component={NorthTracker} condition={isLoggedIn() || isEmployee()} />
+    <RouteWithSidebar exact path={Routes.EastTracker.path} component={EastTracker} condition={isLoggedIn() || isEmployee()} />
     <RouteWithSidebar exact path={Routes.EditCandidate.path} component={EditCandidate} condition={isLoggedIn() || isEmployee()} />
     <RouteWithSidebar exact path={Routes.CandidateDetail.path} component={CandidateDetail} condition={isLoggedIn() || isEmployee()} />
     <RouteWithSidebar exact path={Routes.CandidateShortListedByJob.path} component={CandidatesShortListedByJob} condition={isLoggedIn() || isEmployee()} />
